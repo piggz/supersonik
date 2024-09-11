@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Supersonik
+Exec=supersonik
+Icon=kde
+Type=Application
+Terminal=false
+Categories=Media
