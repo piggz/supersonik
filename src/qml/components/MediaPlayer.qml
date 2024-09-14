@@ -128,6 +128,11 @@ Rectangle {
                 height: 40 + txtTitle.height
 
                 highlighted: index === mediaplayer.currentIndex
+
+                onClicked: {
+                    playFile(index);
+                }
+
                 contentItem:  RowLayout {
                     anchors.margins: 10
                     anchors.fill: parent
