@@ -17,7 +17,7 @@ Kirigami.ScrollablePage {
 
     property int _columns: Math.floor(musicpage.width / 256)
     property int _albumWidth: ((musicpage.width - _columns * 2) - 32) / _columns
-    property int _albumHeight: _albumWidth * 1.2
+    property int _albumHeight: _albumWidth * 1.25
 
     GridView {
         model: xmlModel
