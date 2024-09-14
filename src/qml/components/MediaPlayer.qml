@@ -158,8 +158,12 @@ Rectangle {
         id: playlist
     }
 
-    function loadAlbum(albumId) {
-        doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", parseAlbum );
+    function replaceAlbum(albumId) {
+        doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postReplaceAlbum );
+    }
+    
+    function addAlbum(albumId) {
+        doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postAddAlbum );
     }
 
     function playFile(index) {
@@ -199,11 +203,21 @@ Rectangle {
         }
     }
 
+    function postReplaceAlbum(xhr) {
+        playlist.clear();
+        parseAlbum(xhr);
+        playFile(0)
+    }
+
+    function postAddAlbum(xhr) {
+        parseAlbum(xhr);
+    }
+
     function parseAlbum(xhr) {
         console.log(xhr.response);
         var res = xhr.responseXML;
         console.log(xhr.responseType, xhr.responseText);
-        playlist.clear();
+
 
         if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get album list Ok");
@@ -229,7 +243,6 @@ Rectangle {
             }
 
             console.log("Parsed album....", playlist.get(0).songid);
-            playFile(0)
         } else {
             console.log("Get album list failed");
         }

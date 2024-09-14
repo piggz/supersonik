@@ -40,7 +40,13 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: "media-playback-start"
                     onTriggered: {
-                        mediaPlayer.loadAlbum(albumid)
+                        mediaPlayer.replaceAlbum(albumid)
+                    }
+                },
+                Kirigami.Action {
+                    icon.name: "media-playlist-append"
+                    onTriggered: {
+                        mediaPlayer.addAlbum(albumid)
                     }
                 }
             ]
