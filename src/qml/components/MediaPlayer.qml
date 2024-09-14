@@ -10,11 +10,17 @@ import uk.co.piggz 1.0
 
 Rectangle {
     id: mediaplayer
-    height: childrenRect.height * 2
+    height: maximised ? parent.height : (btnPrev.height * 3)
     color: "#000000"
     opacity: 0.75
 
     property int currentIndex: -1;
+    property bool maximised: false;
+
+    property string currentArtist: ""
+    property string currentTitle: ""
+
+    Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
     QTMM.MediaPlayer {
         id: player
@@ -25,45 +31,77 @@ Rectangle {
         }
     }
 
-    RowLayout {
-        anchors.verticalCenter: parent.verticalCenter
-        spacing: 10
-        x: 10
+    GridLayout {
+        columns:  2
+        anchors.top: parent.top
+        anchors.topMargin: 10
         width: parent.width - 20
+        x: 10
+        rowSpacing: 10
+        columnSpacing: 10
 
-        Controls.Button {
-            id: btnPrev
-            icon.name: "media-skip-backward"
-
-            onClicked: previousTrack()
+        Controls.Label {
+            text: currentTitle
+            color: "white"
+            font.bold: true
         }
 
-        Controls.Button {
-            id: btnPlayePause
-            icon.name: player.playing ? "media-playback-pause" : "media-playback-start"
+        //Controls
+        RowLayout {
+            anchors.verticalCenter: parent.verticalCenter
+            Layout.fillHeight: true
+            spacing: 10
+            Layout.rowSpan: 3
 
-            onClicked: {
-                if (player.playing) {
-                    player.pause();
-                } else {
-                    player.play();
+            Controls.Button {
+                id: btnPrev
+                icon.name: "media-skip-backward"
+
+                onClicked: previousTrack()
+            }
+
+            Controls.Button {
+                id: btnPlayePause
+                icon.name: player.playing ? "media-playback-pause" : "media-playback-start"
+
+                onClicked: {
+                    if (player.playing) {
+                        player.pause();
+                    } else {
+                        player.play();
+                    }
+                }
+            }
+
+            Controls.Button {
+                id: btnNext
+                icon.name: "media-skip-forward"
+
+                onClicked: nextTrack()
+            }
+
+            Controls.Button {
+                id: btnToggleSize
+                icon.name: maximised ? "go-down" : "go-up"
+
+                onClicked: {
+                    maximised = !maximised
                 }
             }
         }
 
-        Controls.Button {
-            id: btnNext
-            icon.name: "media-skip-forward"
-
-            onClicked: nextTrack()
+        Controls.Label {
+            text: currentArtist
+            color: "white"
         }
-
         Controls.Slider {
             id: sldPosition
             Layout.fillWidth: true
             enabled: false
         }
     }
+
+
 
     ListModel {
         id: playlist
@@ -83,6 +121,8 @@ Rectangle {
         currentIndex = index;
 
         var song = playlist.get(index);
+        currentArtist = song.artist;
+        currentTitle = song.title;
         var url = buildSubsonicUrl("stream?id=" + song.songid)
         console.log(url);
 
