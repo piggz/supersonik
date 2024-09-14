@@ -16,9 +16,9 @@ Rectangle {
 
     property int currentIndex: -1;
     property bool maximised: false;
-
     property string currentArtist: ""
     property string currentTitle: ""
+    property int minHeight: (btnPrev.height * 3) - 30
 
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
@@ -36,19 +36,22 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 10
         width: parent.width - 20
-        x: 10
-        rowSpacing: 10
+        height: parent.height
+        x: 5
+        rowSpacing: 5
         columnSpacing: 10
 
         Controls.Label {
             text: currentTitle
             color: "white"
             font.bold: true
+            Layout.preferredHeight: minHeight / 3
+            Layout.alignment: Qt.AlignVCenter
         }
 
         //Controls
         RowLayout {
-            anchors.verticalCenter: parent.verticalCenter
+            Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
             spacing: 10
             Layout.rowSpan: 3
@@ -56,7 +59,7 @@ Rectangle {
             Controls.Button {
                 id: btnPrev
                 icon.name: "media-skip-backward"
-
+                Layout.alignment: Qt.AlignVCenter
                 onClicked: previousTrack()
             }
 
@@ -93,11 +96,57 @@ Rectangle {
         Controls.Label {
             text: currentArtist
             color: "white"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: minHeight / 3
         }
         Controls.Slider {
             id: sldPosition
             Layout.fillWidth: true
             enabled: false
+            Layout.alignment: Qt.AlignVCenter
+            Layout.preferredHeight: minHeight / 3
+        }
+        Item {
+            Layout.columnSpan: 2
+            Layout.rowSpan: 2
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            visible: !maximised
+        }
+
+        ListView {
+            id: lvPLaylist
+            Layout.columnSpan: 2
+            Layout.rowSpan: 2
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            visible: maximised
+            model: playlist
+
+            delegate: Controls.ItemDelegate {
+                width: parent.width
+                height: 40 + txtTitle.height
+
+                highlighted: index === mediaplayer.currentIndex
+                contentItem:  RowLayout {
+                    anchors.margins: 10
+                    anchors.fill: parent
+                    Controls.Label {
+                        id: txtTitle
+                        text: title
+                        color: "white"
+                        Layout.preferredWidth: parent.width * 0.5
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Controls.Label {
+                        id: txtArtist
+                        text: artist
+                        color: "white"
+                        Layout.preferredWidth: parent.width * 0.3
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
+            }
         }
     }
 
