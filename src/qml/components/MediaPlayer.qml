@@ -12,7 +12,7 @@ Rectangle {
     id: mediaplayer
     height: maximised ? parent.height : (btnPrev.height * 3)
     color: "#000000"
-    opacity: 0.75
+    opacity: 0.8
 
     property int currentIndex: -1;
     property bool maximised: false;
@@ -135,6 +135,7 @@ Rectangle {
                         id: txtTitle
                         text: title
                         color: "white"
+                        font.bold: highlighted
                         Layout.preferredWidth: parent.width * 0.5
                         Layout.alignment: Qt.AlignVCenter
                     }
@@ -142,6 +143,7 @@ Rectangle {
                         id: txtArtist
                         text: artist
                         color: "white"
+                        font.bold: highlighted
                         Layout.preferredWidth: parent.width * 0.3
                         Layout.alignment: Qt.AlignVCenter
                     }
