@@ -10,8 +10,8 @@ Kirigami.ApplicationWindow {
     // Unique identifier to reference this object
     id: root
 
-    width: 400
-    height: 300
+    width: 600
+    height: 800
 
     // Window title
     // i18nc() makes a string translatable
@@ -43,6 +43,15 @@ Kirigami.ApplicationWindow {
                 root.pageStack.pushDialogLayer(Qt.resolvedUrl("SettingsPage.qml"))
             }
         }
+    }
+
+    MediaPlayer {
+        id: mediaPlayer
+        parent: root.overlay
+        width: parent.width
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     Component.onCompleted: {
