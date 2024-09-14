@@ -15,20 +15,27 @@ Kirigami.ScrollablePage {
     id: musicpage
     title: i18n("Album List")
 
+    property int _columns: Math.floor(musicpage.width / 256)
+    property int _albumWidth: ((musicpage.width - _columns * 2) - 32) / _columns
+    property int _albumHeight: _albumWidth * 1.2
+
     GridView {
         model: xmlModel
         delegate: albumDelegate
         anchors.fill: parent
-        cellWidth: 258;
-        cellHeight: 320
+        cellWidth: _albumWidth + 2;
+        cellHeight: _albumHeight + 2
     }
 
     Component {
         id: albumDelegate
 
         Kirigami.Card {
-            width: 256
-            height: 320
+            width: _albumWidth
+            height: _albumHeight
+            Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
+            Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
+
             actions: [
                 Kirigami.Action {
                     icon.name: "media-playback-start"
