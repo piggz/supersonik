@@ -31,8 +31,10 @@ Kirigami.ScrollablePage {
             height: 320
             actions: [
                 Kirigami.Action {
-                    text: qsTr("Play")
                     icon.name: "media-playback-start"
+                    onTriggered: {
+                        mediaPlayer.loadAlbum(albumid)
+                    }
                 }
             ]
             banner {
@@ -55,6 +57,7 @@ Kirigami.ScrollablePage {
         XmlListModelRole { name: "artist"; attributeName: "artist" }
         XmlListModelRole { name: "year"; attributeName: "year" }
         XmlListModelRole { name: "coverArt"; attributeName: "coverArt" }
+        XmlListModelRole { name: "albumid"; attributeName: "id" }
 
     }
 

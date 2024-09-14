@@ -1,4 +1,5 @@
-add_executable(supersonik)
+add_executable(supersonik
+    qml/components/MediaPlayer.qml)
 
 ecm_add_qml_module(supersonik
     URI
@@ -16,6 +17,7 @@ ecm_target_qml_sources(supersonik
     qml/Main.qml
     qml/pages/SettingsPage.qml
     qml/pages/MusicFeed.qml
+    qml/components/MediaPlayer.qml
 )
 
 target_link_libraries(supersonik
