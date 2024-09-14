@@ -18,6 +18,9 @@ Rectangle {
     property bool maximised: false;
     property string currentArtist: ""
     property string currentTitle: ""
+    property string currentAlbum: ""
+    property string currentYear: ""
+
     property int minHeight: (btnPrev.height * 3) - 30
 
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
@@ -94,7 +97,7 @@ Rectangle {
         }
 
         Controls.Label {
-            text: currentArtist
+            text: currentArtist + " - " + currentAlbum + " - " + currentYear
             color: "white"
             Layout.alignment: Qt.AlignVCenter
             Layout.preferredHeight: minHeight / 3
@@ -183,6 +186,9 @@ Rectangle {
         var song = playlist.get(index);
         currentArtist = song.artist;
         currentTitle = song.title;
+        currentAlbum = song.albumtitle;
+        currentYear = song.year;
+
         var url = buildSubsonicUrl("stream?id=" + song.songid)
         console.log(url);
 
@@ -241,7 +247,8 @@ Rectangle {
                     if ( song.nodeName ===  "song") {
                         playlist.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
                                             "year": attributeValue(song, "year"), "duration": attributeValue(song, "duration"),
-                                            "songid": attributeValue(song, "id"), "albumid": attributeValue(song, "albumId")})
+                                            "songid": attributeValue(song, "id"), "albumid": attributeValue(song, "albumId"),
+                                            "albumtitle": attributeValue(song, "album")})
                     }
 
                 }
