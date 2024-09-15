@@ -23,6 +23,8 @@ Kirigami.ScrollablePage {
     property int totalItems: 0
     property int currentPage: 1
     property string listType: "alphabeticalByName"
+    property bool _canPageBackward: currentPage > 1
+    property bool _canPageForward: albums.count == itemsPerPage
 
     GridView {
         model: albums
@@ -35,6 +37,7 @@ Kirigami.ScrollablePage {
     actions: [
         Kirigami.Action {
             icon.name: "go-previous"
+            enabled: _canPageBackward
             onTriggered: {
                 if (currentPage > 1) {
                     currentPage--;
@@ -47,6 +50,7 @@ Kirigami.ScrollablePage {
         },
         Kirigami.Action {
             icon.name: "go-next"
+            enabled: _canPageForward
             onTriggered: {
                 currentPage++;
                 refresh();
