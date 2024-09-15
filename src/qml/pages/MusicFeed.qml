@@ -13,8 +13,9 @@ import uk.co.piggz 1.0
 
 Kirigami.ScrollablePage {
     id: musicpage
-    title: i18n("Album List")
+    title: pageTitle()
 
+    property string uid: "musicpage"
     property int _columns: Math.floor(musicpage.width / 256)
     property int _albumWidth: ((musicpage.width - _columns * 2) - 32) / _columns
     property int _albumHeight: _albumWidth * 1.25
@@ -95,6 +96,38 @@ Kirigami.ScrollablePage {
 
     Component.onCompleted: {
         refresh();
+    }
+
+    function pageTitle() {
+        if (listType == "alphabeticalByName") {
+            return i18n("Albums by Name")
+        }
+        if (listType == "alphabeticalByArtist") {
+            return i18n("Albums by Artist")
+        }
+        if (listType == "random") {
+            return i18n("Random Albums")
+        }
+        if (listType == "starred") {
+            return i18n("Favorite Albums")
+        }
+        if (listType == "newest") {
+            return i18n("Latest Albums")
+        }
+        if (listType == "highest") {
+            return i18n("Top Rated Albums")
+        }
+        if (listType == "frequent") {
+            return i18n("Frequently Played Albums")
+        }
+    }
+
+    function switchViewType(viewType) {
+        if (viewType !== listType) {
+            currentPage = 1;
+            listType = viewType;
+            refresh();
+        }
     }
 
     function refresh() {

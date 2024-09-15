@@ -27,22 +27,73 @@ Kirigami.ApplicationWindow {
         globalToolBar {
             style: Kirigami.ApplicationHeaderStyle.ToolBar
             showNavigationButtons: if (root.pageStack.currentIndex > 0 || root.pageStack.layers.currentIndex > 0) {
-                return Kirigami.ApplicationHeaderStyle.ShowBackButton
-            } else {
-                return 0
-            }
+                                       return Kirigami.ApplicationHeaderStyle.ShowBackButton
+                                   } else {
+                                       return 0
+                                   }
         }
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
         isMenu: true
-        actions: Kirigami.Action {
-            text: i18nc("@action:button", "Settings")
-            icon.name: "configure"
-            onTriggered: {
-                root.pageStack.pushDialogLayer(Qt.resolvedUrl("SettingsPage.qml"))
+        actions: [
+            Kirigami.Action {
+                text: i18nc("@action:button", "All Albums by Name")
+                icon.name: "view-media-album-cover"
+                onTriggered: {
+                    switchList("alphabeticalByName")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "All Albums by Artist")
+                icon.name: "view-media-artist"
+                onTriggered: {
+                    switchList("alphabeticalByArtist")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Random Albums")
+                icon.name: "media-playlist-shuffle"
+                onTriggered: {
+                    switchList("random")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Favorite Albums")
+                icon.name: "media-view-favorite"
+                onTriggered: {
+                    switchList("starred")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Latest Albums")
+                icon.name: "view-media-recent"
+                onTriggered: {
+                    switchList("newest")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Top Rated Albums")
+                icon.name: "view-media-playcount"
+                onTriggered: {
+                    switchList("highest")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Frequently Played Albums")
+                icon.name: "media-playlist-play"
+                onTriggered: {
+                    switchList("frequent")
+                }
+            },
+            Kirigami.Action {
+                text: i18nc("@action:button", "Settings")
+                icon.name: "configure"
+                onTriggered: {
+                    root.pageStack.pushDialogLayer(Qt.resolvedUrl("SettingsPage.qml"))
+                }
             }
-        }
+        ]
     }
 
     MediaPlayer {
@@ -62,10 +113,18 @@ Kirigami.ApplicationWindow {
 
         if (!_serverURL || !_username || !_password) {
             pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), {
-                initial: true
-            })
+                               initial: true
+                           })
         } else {
-            pageStack.push(Qt.resolvedUrl("MusicFeed.qml"))
+            pageStack.push(Qt.resolvedUrl("MusicFeed.qml"));
+        }
+    }
+
+    function switchList(type) {
+        const musicpage = getMusicPage();
+
+        if (musicpage) {
+            musicpage.switchViewType(type);
         }
     }
 
@@ -120,9 +179,15 @@ Kirigami.ApplicationWindow {
         const charactersLength = characters.length;
         let counter = 0;
         while (counter < length) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-          counter += 1;
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            counter += 1;
         }
         return result;
+    }
+
+    function getMusicPage() {
+        return pageStack.items.find(function(page) {
+            return page.uid === "musicpage";
+        });
     }
 }
