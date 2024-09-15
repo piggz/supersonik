@@ -18,14 +18,40 @@ Kirigami.ScrollablePage {
     property int _columns: Math.floor(musicpage.width / 256)
     property int _albumWidth: ((musicpage.width - _columns * 2) - 32) / _columns
     property int _albumHeight: _albumWidth * 1.25
+    property int itemsPerPage: 100
+    property int totalItems: 0
+    property int currentPage: 1
+    property string listType: "alphabeticalByName"
 
     GridView {
-        model: xmlModel
+        model: albums
         delegate: albumDelegate
         anchors.fill: parent
         cellWidth: _albumWidth + 2;
         cellHeight: _albumHeight + 2
     }
+
+    actions: [
+        Kirigami.Action {
+            icon.name: "go-previous"
+            onTriggered: {
+                if (currentPage > 1) {
+                    currentPage--;
+                    refresh();
+                }
+            }
+        },
+        Kirigami.Action {
+            displayComponent: Controls.Label { text: currentPage }
+        },
+        Kirigami.Action {
+            icon.name: "go-next"
+            onTriggered: {
+                currentPage++;
+                refresh();
+            }
+        }
+    ]
 
     Component {
         id: albumDelegate
@@ -62,35 +88,50 @@ Kirigami.ScrollablePage {
         }
     }
 
-    XmlListModel {
-        id: xmlModel
-        query: "/subsonic-response/albumList/album"
-
-        XmlListModelRole { name: "title"; attributeName: "title" }
-        XmlListModelRole { name: "artist"; attributeName: "artist" }
-        XmlListModelRole { name: "year"; attributeName: "year" }
-        XmlListModelRole { name: "coverArt"; attributeName: "coverArt" }
-        XmlListModelRole { name: "albumid"; attributeName: "id" }
-
+    ListModel {
+        id: albums;
     }
 
 
     Component.onCompleted: {
+        refresh();
+    }
+
+    function refresh() {
         console.log("Get albun list");
-        xmlModel.source = buildSubsonicUrl("getAlbumList?type=alphabeticalByName&size=100");
-        xmlModel.reload();
+        doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
     function parseAlbumList(xhr) {
         console.log(xhr.response);
-        var doc = xhr.responseXML;
-        console.log(xhr.responseType, xhr.responseText, doc.documentElement.tagName, doc.documentElement.attributes.length);
+        var res = xhr.responseXML;
+        console.log(xhr.responseType, xhr.responseText);
 
-        if (attributeValue(doc.documentElement, "status") === "ok") {
+        if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get album list Ok");
+            albums.clear();
 
+            var doc = res.documentElement;
+            console.log("xhr length: " + doc.childNodes.length );
+
+            for (var i = 0; i < doc.childNodes.length; ++i) {
+                var album = doc.childNodes[i];
+                console.log("album length: " + album.nodeName, album.childNodes.length);
+
+                for (var j = 0; j < album.childNodes.length; ++j) {
+                    var song = album.childNodes[j];
+
+                    console.log(song.nodeName);
+                    if ( song.nodeName ===  "album") {
+                        albums.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
+                                          "year": attributeValue(song, "year"),"albumid": attributeValue(song, "id"),
+                                          "coverArt": attributeValue(song, "coverArt")})
+                    }
+
+                }
+            }
         } else {
-            console.log("Get album list failed");
+            console.log("Get album failed");
         }
     }
 }

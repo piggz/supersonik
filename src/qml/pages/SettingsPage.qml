@@ -94,6 +94,7 @@ Kirigami.ScrollablePage {
             console.log("Ping Ok");
             if (page.initial) {
                 applicationWindow().pageStack.replace(Qt.resolvedUrl("MusicFeed.qml"))
+                musicpage.refresh();
             } else {
                 page.closeDialog();
             }

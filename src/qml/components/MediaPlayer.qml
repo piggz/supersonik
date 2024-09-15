@@ -256,7 +256,7 @@ Rectangle {
 
             console.log("Parsed album....", playlist.get(0).songid);
         } else {
-            console.log("Get album list failed");
+            console.log("Get album failed");
         }
     }
 }
