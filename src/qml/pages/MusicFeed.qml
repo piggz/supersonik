@@ -16,9 +16,10 @@ Kirigami.ScrollablePage {
     title: pageTitle()
 
     property string uid: "musicpage"
-    property int _columns: Math.floor(musicpage.width / 256)
+    property int _albumTargetWidth: 192
+    property int _columns: Math.floor(musicpage.width / _albumTargetWidth)
     property int _albumWidth: ((musicpage.width - _columns * 2) - 32) / _columns
-    property int _albumHeight: _albumWidth * 1.25
+    property int _albumHeight: _albumWidth * 1.5
     property int itemsPerPage: 100
     property int totalItems: 0
     property int currentPage: 1
