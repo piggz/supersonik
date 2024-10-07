@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
 {
     KIconTheme::initTheme();
     QApplication app(argc, argv);
-    KLocalizedString::setApplicationDomain("tutorial");
-    QApplication::setOrganizationName(QStringLiteral("KDE"));
-    QApplication::setOrganizationDomain(QStringLiteral("kde.org"));
-    QApplication::setApplicationName(QStringLiteral("Kirigami Tutorial"));
+    KLocalizedString::setApplicationDomain("supersonik");
+    QApplication::setOrganizationName(QStringLiteral("piggz"));
+    QApplication::setOrganizationDomain(QStringLiteral("piggz.co.uk"));
+    QApplication::setApplicationName(QStringLiteral("Supersonik"));
     QApplication::setDesktopFileName(QStringLiteral("uk.co.piggz.supersonik"));
 
     QApplication::setStyle(QStringLiteral("breeze"));
