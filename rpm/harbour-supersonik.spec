@@ -26,7 +26,7 @@ Subsonic music client for KDE desktops and mobile devices
 %autosetup -n %{name}-%{version}
 
 %build
-%cmake_kf6
+%cmake_kf6 -DSAILFISHOS=ON
 %cmake_build
 
 %install
@@ -35,4 +35,5 @@ Subsonic music client for KDE desktops and mobile devices
 %files
 %defattr(-,root,root,-)
 %{_bindir}
-%{_datadir}/applications/uk.co.piggz.supersonik.desktop
+%{_datadir}/applications/uk.co.piggz.harbour-supersonik.desktop
+%{_datadir}/icons/hicolor/86x86/apps/harbour-supersonik.png

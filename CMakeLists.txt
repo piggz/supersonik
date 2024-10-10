@@ -31,6 +31,12 @@ ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 add_subdirectory(src)
 
-install(PROGRAMS uk.co.piggz.supersonik.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+if (SAILFISHOS)
+    install(PROGRAMS uk.co.piggz.harbour-supersonik.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+    install(FILES harbour-supersonik.png DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/86x86/apps)
+else()
+    install(PROGRAMS uk.co.piggz.supersonik.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+endif()
+
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)

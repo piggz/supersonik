@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Supersonik
+Exec=qt-runner supersonik
+Icon=harbour-supersonik
+Type=Application
+Terminal=false
+Categories=Media
+X-Nemo-Application-Type=generic
+X-Nemo-Single-Instance=no
+
+[X-Sailjail]
+Sandboxing=Disabled
