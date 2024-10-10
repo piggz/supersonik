@@ -60,7 +60,7 @@ Kirigami.ApplicationWindow {
             },
             Kirigami.Action {
                 text: i18nc("@action:button", "Favorite Albums")
-                icon.name: "media-view-favorite"
+                icon.name: "view-media-favorite"
                 onTriggered: {
                     switchList("starred")
                 }
