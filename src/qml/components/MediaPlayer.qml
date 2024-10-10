@@ -10,7 +10,7 @@ import uk.co.piggz 1.0
 
 Rectangle {
     id: mediaplayer
-    height: maximised ? parent.height : (btnPrev.height * 4)
+    height: maximised ? parent.height : (lblTitle.height + lblArtist.height + sldPosition.height + rowButtons.height + 50 )
     color: "#000000"
     opacity: 0.85
 
@@ -35,14 +35,16 @@ Rectangle {
     }
 
     ColumnLayout {
+        id: controlLayout
         anchors.top: parent.top
         anchors.topMargin: 10
         width: parent.width - 20
         height: parent.height
-        x: 5
+        x: 10
         spacing: 10
 
         Controls.Label {
+            id: lblTitle
             text: currentTitle
             color: "white"
             font.bold: true
@@ -52,6 +54,7 @@ Rectangle {
         }
 
         Controls.Label {
+            id: lblArtist
             text: currentArtist + " - " + currentAlbum + " - " + currentYear
             color: "white"
             Layout.alignment: Qt.AlignVCenter
@@ -69,6 +72,7 @@ Rectangle {
 
         //Controls
         RowLayout {
+            id: rowButtons
             Layout.alignment: Qt.AlignVCenter
             //Layout.fillHeight: true
             spacing: 10
