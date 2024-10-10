@@ -26,16 +26,55 @@ Kirigami.ScrollablePage {
     property string listType: "alphabeticalByName"
     property bool _canPageBackward: currentPage > 1
     property bool _canPageForward: albums.count == itemsPerPage
+    property bool _displaySearch: false
 
     GridView {
+        id: grdAlbums
         model: albums
         delegate: albumDelegate
         anchors.fill: parent
         cellWidth: _albumWidth + 2;
         cellHeight: _albumHeight + 2
+
+        header: Component {
+            Item {
+                height: _displaySearch ? txtSearch.height + 20: 0
+                width: parent.width - 20
+
+                RowLayout {
+                    spacing: 10
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    visible: _displaySearch
+
+                    Controls.TextField {
+                        id: txtSearch
+                        Layout.fillWidth: true
+                        placeholderText: "Album Search..."
+                    }
+                    Controls.ToolButton {
+                        id: btnSearch
+                        icon.source: "search"
+                        onClicked: {
+                            searchAlbums(txtSearch.text);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     actions: [
+        Kirigami.Action {
+            icon.name: "search"
+            onTriggered: {
+                console.log("search");
+                _displaySearch = !_displaySearch;
+                if (_displaySearch) {
+                    grdAlbums.positionViewAtBeginning()
+                }
+            }
+        },
         Kirigami.Action {
             icon.name: "go-previous"
             enabled: _canPageBackward
@@ -133,6 +172,11 @@ Kirigami.ScrollablePage {
             listType = viewType;
             refresh();
         }
+    }
+
+    function searchAlbums(text) {
+        console.log("Get albun list");
+        doRequest(buildSubsonicUrl("search2?query=" + text + "&artistCount=0" + "&songCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
     function refresh() {
