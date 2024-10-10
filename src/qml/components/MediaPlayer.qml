@@ -10,7 +10,7 @@ import uk.co.piggz 1.0
 
 Rectangle {
     id: mediaplayer
-    height: maximised ? parent.height : (btnPrev.height * 3)
+    height: maximised ? parent.height : (btnPrev.height * 4)
     color: "#000000"
     opacity: 0.8
 
@@ -21,7 +21,7 @@ Rectangle {
     property string currentAlbum: ""
     property string currentYear: ""
 
-    property int minHeight: (btnPrev.height * 3) - 30
+    //property int minHeight: (btnPrev.height * 4) - 30
 
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
@@ -34,30 +34,45 @@ Rectangle {
         }
     }
 
-    GridLayout {
-        columns:  2
+    ColumnLayout {
         anchors.top: parent.top
         anchors.topMargin: 10
         width: parent.width - 20
         height: parent.height
         x: 5
-        rowSpacing: 5
-        columnSpacing: 10
+        spacing: 10
 
         Controls.Label {
             text: currentTitle
             color: "white"
             font.bold: true
-            Layout.preferredHeight: minHeight / 3
             Layout.alignment: Qt.AlignVCenter
+            Layout.maximumWidth: root.width - 20
+            elide: "ElideRight"
+        }
+
+        Controls.Label {
+            text: currentArtist + " - " + currentAlbum + " - " + currentYear
+            color: "white"
+            Layout.alignment: Qt.AlignVCenter
+            Layout.maximumWidth: root.width - 20
+            elide: "ElideRight"
+        }
+
+        Controls.Slider {
+            id: sldPosition
+            Layout.fillWidth: true
+            enabled: false
+            Layout.alignment: Qt.AlignVCenter
+            //Layout.preferredHeight: minHeight / 3
         }
 
         //Controls
         RowLayout {
             Layout.alignment: Qt.AlignVCenter
-            Layout.fillHeight: true
+            //Layout.fillHeight: true
             spacing: 10
-            Layout.rowSpan: 3
+            //Layout.rowSpan: 3
 
             Controls.Button {
                 id: btnPrev
@@ -86,6 +101,10 @@ Rectangle {
                 onClicked: nextTrack()
             }
 
+            Item {
+                Layout.fillWidth: true
+            }
+
             Controls.Button {
                 id: btnToggleSize
                 icon.name: maximised ? "go-down" : "go-up"
@@ -96,19 +115,7 @@ Rectangle {
             }
         }
 
-        Controls.Label {
-            text: currentArtist + " - " + currentAlbum + " - " + currentYear
-            color: "white"
-            Layout.alignment: Qt.AlignVCenter
-            Layout.preferredHeight: minHeight / 3
-        }
-        Controls.Slider {
-            id: sldPosition
-            Layout.fillWidth: true
-            enabled: false
-            Layout.alignment: Qt.AlignVCenter
-            Layout.preferredHeight: minHeight / 3
-        }
+
         Item {
             Layout.columnSpan: 2
             Layout.rowSpan: 2
@@ -145,6 +152,8 @@ Rectangle {
                         color: "white"
                         font.bold: highlighted
                         Layout.preferredWidth: parent.width * 0.5
+                        Layout.maximumWidth: parent.width * 0.5
+                        elide: "ElideRight"
                         Layout.alignment: Qt.AlignVCenter
                     }
                     Controls.Label {
@@ -153,6 +162,8 @@ Rectangle {
                         color: "white"
                         font.bold: highlighted
                         Layout.preferredWidth: parent.width * 0.3
+                        Layout.maximumWidth: parent.width * 0.5
+                        elide: "ElideRight"
                         Layout.alignment: Qt.AlignVCenter
                     }
                 }
