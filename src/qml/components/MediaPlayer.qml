@@ -12,7 +12,7 @@ Rectangle {
     id: mediaplayer
     height: maximised ? parent.height : (btnPrev.height * 4)
     color: "#000000"
-    opacity: 0.8
+    opacity: 0.85
 
     property int currentIndex: -1;
     property bool maximised: false;
