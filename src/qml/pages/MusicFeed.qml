@@ -54,7 +54,7 @@ Kirigami.ScrollablePage {
                     }
                     Controls.ToolButton {
                         id: btnSearch
-                        icon.source: "search"
+                        icon.name: "search"
                         onClicked: {
                             searchAlbums(txtSearch.text);
                         }
