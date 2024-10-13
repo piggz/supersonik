@@ -32,6 +32,12 @@ Rectangle {
         onPositionChanged: {
             sldPosition.value = player.position / 1000;
         }
+
+        onMediaStatusChanged: {
+            if (mediaStatus == QTMM.MediaPlayer.EndOfMedia) {
+                nextTrack();
+            }
+        }
     }
 
     ColumnLayout {
