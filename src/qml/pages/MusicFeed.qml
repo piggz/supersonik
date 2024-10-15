@@ -31,7 +31,7 @@ Kirigami.ScrollablePage {
 
     GridView {
         id: grdAlbums
-        model: _displayArtist ? artists: albums
+        model: _displayArtist ? artists : albums
         delegate: _displayArtist ? artistDelegate : albumDelegate
         anchors.fill: parent
         cellWidth: _albumWidth + 2;
@@ -244,6 +244,7 @@ Kirigami.ScrollablePage {
         if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get album list Ok");
             albums.clear();
+            artists.clear();
 
             var doc = res.documentElement;
             console.log("xhr length: " + doc.childNodes.length );
@@ -278,6 +279,7 @@ Kirigami.ScrollablePage {
         if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get artist list Ok");
             artists.clear();
+            albums.clear();
 
             var doc = res.documentElement;
             console.log("xhr length: " + doc.childNodes.length );
