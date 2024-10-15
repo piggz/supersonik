@@ -27,11 +27,12 @@ Kirigami.ScrollablePage {
     property bool _canPageBackward: currentPage > 1
     property bool _canPageForward: albums.count == itemsPerPage
     property bool _displaySearch: false
+    property bool _displayArtist: false
 
     GridView {
         id: grdAlbums
-        model: albums
-        delegate: albumDelegate
+        model: _displayArtist ? artists: albums
+        delegate: _displayArtist ? artistDelegate : albumDelegate
         anchors.fill: parent
         cellWidth: _albumWidth + 2;
         cellHeight: _albumHeight + 2
@@ -56,7 +57,11 @@ Kirigami.ScrollablePage {
                         id: btnSearch
                         icon.name: "search"
                         onClicked: {
-                            searchAlbums(txtSearch.text);
+                            if (listType == "alphabeticalByArtist") {
+                                searchArtists(txtSearch.text);
+                            } else {
+                                searchAlbums(txtSearch.text);
+                            }
                         }
                     }
                 }
@@ -133,10 +138,46 @@ Kirigami.ScrollablePage {
         }
     }
 
+    Component {
+        id: artistDelegate
+
+        Kirigami.Card {
+            width: _albumWidth
+            height: _albumHeight
+            Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
+            Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
+
+            actions: [
+                Kirigami.Action {
+                    icon.name: "library-music-symbolic"
+                    onTriggered: {
+                        loadArtistAlbums(artistId)
+                    }
+                }
+            ]
+            banner {
+                source: buildSubsonicUrl("getCoverArt?id=" + coverArt)
+                onToggled: {
+                    console.log("toggle");
+                }
+
+                //title: name
+                //titleAlignment: Qt.AlignLeft | Qt.AlignBottom
+            }
+            contentItem: Controls.Label {
+                wrapMode: Text.WordWrap
+                text: name
+            }
+        }
+    }
+
     ListModel {
         id: albums;
     }
 
+    ListModel {
+        id: artists;
+    }
 
     Component.onCompleted: {
         refresh();
@@ -174,13 +215,23 @@ Kirigami.ScrollablePage {
         }
     }
 
+    function searchArtists(text) {
+        console.log("searchArtists");
+        doRequest(buildSubsonicUrl("search2?query=" + text + "&albumCount=0" + "&artistCount=" + itemsPerPage + "&songCount=0" + "&artistOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseArtists );
+    }
+
     function searchAlbums(text) {
-        console.log("Get albun list");
-        doRequest(buildSubsonicUrl("search2?query=" + text + "&artistCount=0" + "&songCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+        console.log("searchAlbums");
+        doRequest(buildSubsonicUrl("search2?query=" + text + "&artistCount=0" + "&albumCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+    }
+
+    function loadArtistAlbums(artistId) {
+        console.log("loadArtistAlbums");
+        doRequest(buildSubsonicUrl("getArtist?id=" + artistId), "GET", parseAlbumList );
     }
 
     function refresh() {
-        console.log("Get albun list");
+        console.log("refresh");
         doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
@@ -188,6 +239,7 @@ Kirigami.ScrollablePage {
         console.log(xhr.response);
         var res = xhr.responseXML;
         console.log(xhr.responseType, xhr.responseText);
+        _displayArtist = false;
 
         if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get album list Ok");
@@ -216,4 +268,38 @@ Kirigami.ScrollablePage {
             console.log("Get album failed");
         }
     }
+
+    function parseArtists(xhr) {
+        console.log(xhr.response);
+        var res = xhr.responseXML;
+        console.log(xhr.responseType, xhr.responseText);
+        _displayArtist = true;
+
+        if (attributeValue(res.documentElement, "status") === "ok") {
+            console.log("Get artist list Ok");
+            artists.clear();
+
+            var doc = res.documentElement;
+            console.log("xhr length: " + doc.childNodes.length );
+
+            for (var i = 0; i < doc.childNodes.length; ++i) {
+                var results = doc.childNodes[i];
+                console.log("result length: " + results.nodeName, results.childNodes.length);
+
+                for (var j = 0; j < results.childNodes.length; ++j) {
+                    var artist = results.childNodes[j];
+
+                    console.log(artist.nodeName);
+                    if ( artist.nodeName ===  "artist") {
+                        artists.append({"name": attributeValue(artist, "name"),
+                                          "artistImage": attributeValue(artist, "artistImageUrl"),"artistId": attributeValue(artist, "id"),
+                                          "coverArt": attributeValue(artist, "coverArt")})
+                    }
+                }
+            }
+        } else {
+            console.log("Get album failed");
+        }
+    }
+
 }
