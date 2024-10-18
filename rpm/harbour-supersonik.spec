@@ -6,7 +6,7 @@ License:	GPLv3
 URL:		https://www.piggz.co.uk
 Source0:        %{name}-%{version}.tar.bz2
 
-Requires:       qt-runner
+Requires:       qt-runner-qt6
 BuildRequires:	cmake
 BuildRequires:	clang
 BuildRequires:	kf6-extra-cmake-modules
