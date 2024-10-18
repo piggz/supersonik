@@ -34,6 +34,7 @@ Kirigami.ScrollablePage {
         model: _displayArtist ? artists : albums
         delegate: _displayArtist ? artistDelegate : albumDelegate
         anchors.fill: parent
+        anchors.bottomMargin: 50
         cellWidth: _albumWidth + 2;
         cellHeight: _albumHeight + 2
 
@@ -65,6 +66,12 @@ Kirigami.ScrollablePage {
                         }
                     }
                 }
+            }
+        }
+        footer: Component {
+            Item {
+                width: parent.width
+                height: mpHeight
             }
         }
     }

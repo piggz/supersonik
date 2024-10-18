@@ -21,6 +21,7 @@ Kirigami.ApplicationWindow {
     property string _serverURL: ""
     property string _username: ""
     property string _password: ""
+    property int mpHeight: mediaPlayer.height
 
     pageStack {
         defaultColumnWidth: Kirigami.Units.gridUnit * 20
@@ -100,6 +101,7 @@ Kirigami.ApplicationWindow {
         id: mediaPlayer
         parent: root.overlay
         width: parent.width
+        height: maximised ? parent.height : minHeight
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

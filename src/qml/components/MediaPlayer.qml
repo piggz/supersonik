@@ -10,7 +10,7 @@ import uk.co.piggz 1.0
 
 Rectangle {
     id: mediaplayer
-    height: maximised ? parent.height : (lblTitle.height + lblArtist.height + sldPosition.height + rowButtons.height + 50 )
+    property int minHeight:(lblTitle.height + lblArtist.height + sldPosition.height + rowButtons.height + 50 )
     color: "#000000"
     opacity: 0.85
 
