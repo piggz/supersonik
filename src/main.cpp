@@ -19,10 +19,7 @@ int main(int argc, char *argv[])
     QApplication::setApplicationName(QStringLiteral("Supersonik"));
     QApplication::setDesktopFileName(QStringLiteral("uk.co.piggz.supersonik"));
 
-    QApplication::setStyle(QStringLiteral("breeze"));
-    if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
-        QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
-    }
+    QQuickStyle::setStyle(QStringLiteral("Material"));
 
     QQmlApplicationEngine engine;
 
