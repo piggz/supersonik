@@ -6,7 +6,6 @@ License:	GPLv3
 URL:		https://www.piggz.co.uk
 Source0:        %{name}-%{version}.tar.bz2
 
-Requires:       qt-runner-qt6
 BuildRequires:	cmake
 BuildRequires:	clang
 BuildRequires:	kf6-extra-cmake-modules
@@ -18,6 +17,10 @@ BuildRequires:	kf6-kconfig-devel
 BuildRequires:	kf6-kiconthemes-devel
 BuildRequires:	kf6-kcolorscheme-devel
 BuildRequires:	qt6-qtdeclarative-devel
+
+Requires:       qt-runner-qt6
+Requires:       qt6-qtmultimedia
+Requires:       kf6-kirigami-addons
 
 %description
 Subsonic music client for KDE desktops and mobile devices
