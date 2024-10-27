@@ -16,9 +16,10 @@ Kirigami.ScrollablePage {
     title: pageTitle()
 
     property string uid: "musicpage"
-    property int _albumTargetWidth: 192
-    property int _columns: Math.floor(musicpage.width / _albumTargetWidth)
-    property int _albumWidth: ((musicpage.width - _columns * 2) - 24) / _columns
+    //property int _albumTargetWidth: 192
+    //property int _columns: Math.floor(musicpage.width / _albumTargetWidth)
+    property int _columns: musicpage.width > musicpage.height ? 4 : 2
+    property int _albumWidth: ((musicpage.width - _columns * 2)) / _columns
     property int _albumHeight: _albumWidth * 1.5
     property int itemsPerPage: 100
     property int totalItems: 0
@@ -139,7 +140,8 @@ Kirigami.ScrollablePage {
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
             }
             contentItem: Controls.Label {
-                wrapMode: Text.WordWrap
+                wrapMode: Text.NoWrap
+                elide: Text.ElideRight
                 text: artist + " - " + year
             }
         }

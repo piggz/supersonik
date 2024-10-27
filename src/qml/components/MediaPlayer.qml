@@ -142,6 +142,7 @@ Rectangle {
             Layout.fillWidth: true
             visible: maximised
             model: playlist
+            clip: true
 
             delegate: Controls.ItemDelegate {
                 width: parent.width
@@ -197,6 +198,7 @@ Rectangle {
 
     function playFile(index) {
         console.log(index);
+        player.stop();
         if (playlist.count === 0 || index >= playlist.count) {
             console.log("Index out of range");
             return;
@@ -215,7 +217,7 @@ Rectangle {
 
         sldPosition.to = song.duration
         player.source = url;
-        player.play()
+        player.play();
     }
 
     function nextTrack() {
