@@ -137,6 +137,7 @@ Kirigami.ScrollablePage {
             banner {
                 source: buildSubsonicUrl("getCoverArt?id=" + coverArt)
                 title: title
+                implicitHeight: width
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
             }
             contentItem: Controls.Label {
