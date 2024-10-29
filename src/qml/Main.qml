@@ -4,6 +4,8 @@ import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
 import uk.co.piggz 1.0
+import QtMultimedia as QTMM
+import Amber.Mpris 1.0
 
 // Provides basic features needed for all kirigami applications
 Kirigami.ApplicationWindow {
@@ -105,6 +107,47 @@ Kirigami.ApplicationWindow {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+    }
+
+    MprisPlayer {
+        id: mprisPlayer
+        serviceName: "supersonik"
+        identity: "Supersonik Media Player"
+
+        playbackStatus: {
+            console.log("xx", mediaPlayer.playbackState);
+            switch (mediaPlayer.playbackState) {
+            case QTMM.MediaPlayer.PlayingState:
+                return Mpris.Playing
+            case QTMM.MediaPlayer.PausedState:
+                return Mpris.Paused
+            default:
+                return Mpris.Stopped
+            }
+        }
+
+        canControl: true
+        canGoNext: mediaPlayer.canGoNext
+        canGoPrevious: mediaPlayer.canGoPrevious
+        canPause: playbackStatus == Mpris.Playing
+        canPlay: playbackStatus != Mpris.Playing
+        canSeek: false
+
+        onPlayRequested: mediaPlayer.play()
+        onStopRequested: mediaPlayer.stop()
+        onPauseRequested: mediaPlayer.pause()
+        //onPlayPauseRequested: if (player.playbackState == Audio.PlayingState) { player.pause() } else { player.play() }
+        onNextRequested: mediaPlayer.nextTrack()
+        onPreviousRequested: mediaPlayer.previousTrack()
+
+        metaData {
+            url: mediaPlayer.url
+            trackId: mediaPlayer.urrentIndex
+            albumTitle: mediaPlayer.currentAlbum
+            albumArtist: mediaPlayer.currentArtist
+            year: mediaPlayer.currentYear
+            title: mediaPlayer.currentTitle
+        }
     }
 
     Component.onCompleted: {

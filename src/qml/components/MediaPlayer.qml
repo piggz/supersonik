@@ -21,6 +21,11 @@ Rectangle {
     property string currentAlbum: ""
     property string currentYear: ""
 
+    property bool canGoNext: currentIndex < (playlist.count - 1)
+    property bool canGoPrevious: currentIndex > 0
+    property alias playbackState: player.playbackState
+    property alias url: player.source
+
     //property int minHeight: (btnPrev.height * 4) - 30
 
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
@@ -186,6 +191,21 @@ Rectangle {
 
     ListModel {
         id: playlist
+    }
+
+    function play() {
+        console.log("MediaPlayer::play");
+        player.play();
+    }
+
+    function stop() {
+        console.log("MediaPlayer::stop");
+        player.stop();
+    }
+
+    function pause() {
+        console.log("MediaPlayer::pause");
+        player.pause();
     }
 
     function replaceAlbum(albumId) {
