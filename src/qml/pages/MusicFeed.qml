@@ -178,7 +178,8 @@ Kirigami.ScrollablePage {
                 }
             }
             contentItem: Controls.Label {
-                wrapMode: Text.WordWrap
+                wrapMode: Text.NoWrap
+                elide: Text.ElideRight
                 text: name
             }
 
