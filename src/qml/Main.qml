@@ -137,7 +137,7 @@ Kirigami.ApplicationWindow {
         onPlayRequested: mediaPlayer.play()
         onStopRequested: mediaPlayer.stop()
         onPauseRequested: mediaPlayer.pause()
-        //onPlayPauseRequested: if (player.playbackState == Audio.PlayingState) { player.pause() } else { player.play() }
+        onPlayPauseRequested: mediaPlayer.playPause()
         onNextRequested: mediaPlayer.nextTrack()
         onPreviousRequested: mediaPlayer.previousTrack()
 

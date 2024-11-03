@@ -208,6 +208,32 @@ Rectangle {
         player.pause();
     }
 
+    function playPause() {
+        console.log("MediaPlayer::playPause", player.playing);
+        if (player.playing) {
+            player.pause();
+        } else {
+            player.play();
+        }
+    }
+
+    function nextTrack() {
+        console.log("MediaPlayer::nextTrack", currentIndex, playlist.count);
+        if (currentIndex < (playlist.count - 1)) {
+            currentIndex++;
+            playFile(currentIndex);
+        }
+    }
+
+    function previousTrack() {
+        console.log("MediaPlayer::previousTrack", currentIndex, playlist.count);
+
+        if (currentIndex > 0) {
+            currentIndex--;
+            playFile(currentIndex);
+        }
+    }
+
     function replaceAlbum(albumId) {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postReplaceAlbum );
     }
@@ -238,23 +264,6 @@ Rectangle {
         sldPosition.to = song.duration
         player.source = url;
         player.play();
-    }
-
-    function nextTrack() {
-        console.log(currentIndex, playlist.count);
-        if (currentIndex < (playlist.count - 1)) {
-            currentIndex++;
-            playFile(currentIndex);
-        }
-    }
-
-    function previousTrack() {
-        console.log(currentIndex, playlist.count);
-
-        if (currentIndex > 0) {
-            currentIndex--;
-            playFile(currentIndex);
-        }
     }
 
     function postReplaceAlbum(xhr) {
