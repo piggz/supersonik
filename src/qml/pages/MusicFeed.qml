@@ -20,7 +20,7 @@ Kirigami.ScrollablePage {
     //property int _columns: Math.floor(musicpage.width / _albumTargetWidth)
     property int _columns: musicpage.width > musicpage.height ? 4 : 2
     property int _albumWidth: ((musicpage.width - _columns * 2)) / _columns
-    property int _albumHeight: _albumWidth * 1.5
+    property int _albumHeight: 0
     property int itemsPerPage: 100
     property int totalItems: 0
     property int currentPage: 1
@@ -37,7 +37,7 @@ Kirigami.ScrollablePage {
         anchors.fill: parent
         anchors.bottomMargin: 50
         cellWidth: _albumWidth + 2;
-        cellHeight: _albumHeight + 2
+        cellHeight: _albumHeight + 2;
 
         header: Component {
             Item {
@@ -115,8 +115,8 @@ Kirigami.ScrollablePage {
         id: albumDelegate
 
         Kirigami.Card {
+            id: card
             width: _albumWidth
-            height: _albumHeight
             Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
             Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
@@ -135,7 +135,7 @@ Kirigami.ScrollablePage {
                 }
             ]
             banner {
-                source: buildSubsonicUrl("getCoverArt?id=" + coverArt)
+                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/cassette.png")
                 title: title
                 implicitHeight: width
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
@@ -145,7 +145,14 @@ Kirigami.ScrollablePage {
                 elide: Text.ElideRight
                 text: artist + " - " + year
             }
+
+            onHeightChanged: {
+                if (GridView.isCurrentItem) {
+                    setCellHeight(height);
+                }
+            }
         }
+
     }
 
     Component {
@@ -153,7 +160,6 @@ Kirigami.ScrollablePage {
 
         Kirigami.Card {
             width: _albumWidth
-            height: _albumHeight
             Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
             Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
@@ -170,13 +176,16 @@ Kirigami.ScrollablePage {
                 onToggled: {
                     console.log("toggle");
                 }
-
-                //title: name
-                //titleAlignment: Qt.AlignLeft | Qt.AlignBottom
             }
             contentItem: Controls.Label {
                 wrapMode: Text.WordWrap
                 text: name
+            }
+
+            onHeightChanged: {
+                if (GridView.isCurrentItem) {
+                    setCellHeight(height);
+                }
             }
         }
     }
@@ -191,6 +200,13 @@ Kirigami.ScrollablePage {
 
     Component.onCompleted: {
         refresh();
+    }
+
+    function setCellHeight(h) {
+        if (Math.floor(h) != _albumHeight) {
+            _albumHeight = Math.floor(h);
+            grdAlbums.forceLayout();
+        }
     }
 
     function pageTitle() {
