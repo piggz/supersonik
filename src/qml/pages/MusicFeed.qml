@@ -16,8 +16,6 @@ Kirigami.ScrollablePage {
     title: pageTitle()
 
     property string uid: "musicpage"
-    //property int _albumTargetWidth: 192
-    //property int _columns: Math.floor(musicpage.width / _albumTargetWidth)
     property int _columns: musicpage.width > musicpage.height ? 4 : 2
     property int _albumWidth: ((musicpage.width - _columns * 2)) / _columns
     property int _albumHeight: 0
@@ -53,13 +51,13 @@ Kirigami.ScrollablePage {
                     Controls.TextField {
                         id: txtSearch
                         Layout.fillWidth: true
-                        placeholderText: "Album Search..."
+                        placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
                     }
                     Controls.ToolButton {
                         id: btnSearch
                         icon.name: "search"
                         onClicked: {
-                            if (listType == "alphabeticalByArtist") {
+                            if (listType === "alphabeticalByArtist") {
                                 searchArtists(txtSearch.text);
                             } else {
                                 searchAlbums(txtSearch.text);
