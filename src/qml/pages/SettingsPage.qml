@@ -79,6 +79,10 @@ Kirigami.ScrollablePage {
                 text: _serverMessage
             }
 
+            Item {
+                width: parent.width
+                height: page.height / 2
+            }
         }
     }
 
