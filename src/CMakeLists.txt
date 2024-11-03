@@ -11,6 +11,7 @@ ecm_add_qml_module(supersonik
     qml/components/MediaPlayer.qml
     RESOURCES
     qml/pics/cassette.png
+    qml/pics/artist.png
 )
 
 target_sources(supersonik

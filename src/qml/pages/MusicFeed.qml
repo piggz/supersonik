@@ -172,7 +172,7 @@ Kirigami.ScrollablePage {
                 }
             ]
             banner {
-                source: buildSubsonicUrl("getCoverArt?id=" + coverArt)
+                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/artist.png")
                 onToggled: {
                     console.log("toggle");
                 }
@@ -243,12 +243,12 @@ Kirigami.ScrollablePage {
 
     function searchArtists(text) {
         console.log("searchArtists");
-        doRequest(buildSubsonicUrl("search2?query=" + text + "&albumCount=0" + "&artistCount=" + itemsPerPage + "&songCount=0" + "&artistOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseArtists );
+        doRequest(buildSubsonicUrl("search3?query=" + text + "&albumCount=0" + "&artistCount=" + itemsPerPage + "&songCount=0" + "&artistOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseArtists );
     }
 
     function searchAlbums(text) {
         console.log("searchAlbums");
-        doRequest(buildSubsonicUrl("search2?query=" + text + "&artistCount=0" + "&albumCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+        doRequest(buildSubsonicUrl("search3?query=" + text + "&artistCount=0" + "&albumCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
     function loadArtistAlbums(artistId) {
