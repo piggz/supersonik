@@ -21,7 +21,7 @@ BuildRequires:	qt6-qtdeclarative-devel
 Requires:       qt-runner-qt6
 Requires:       qt6-qtmultimedia
 Requires:       kf6-kirigami-addons
-Requires:       qt6-amber-qml-plugin-mpris
+Requires:       amber-qml-plugin-mpris-qt6
 
 %description
 Subsonic music client for KDE desktops and mobile devices
