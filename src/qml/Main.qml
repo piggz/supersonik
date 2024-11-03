@@ -6,6 +6,7 @@ import org.kde.kirigami as Kirigami
 import uk.co.piggz 1.0
 import QtMultimedia as QTMM
 import Amber.Mpris 1.0
+import uk.co.piggz.supersonik
 
 // Provides basic features needed for all kirigami applications
 Kirigami.ApplicationWindow {
@@ -93,7 +94,7 @@ Kirigami.ApplicationWindow {
                 text: i18nc("@action:button", "Settings")
                 icon.name: "configure"
                 onTriggered: {
-                    root.pageStack.pushDialogLayer(Qt.resolvedUrl("SettingsPage.qml"))
+                    root.pageStack.pushDialogLayer(Qt.resolvedUrl("./pages/SettingsPage.qml"))
                 }
             }
         ]
@@ -157,11 +158,11 @@ Kirigami.ApplicationWindow {
         _password = Helper.getSetting("password", "");
 
         if (!_serverURL || !_username || !_password) {
-            pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), {
+            pageStack.push(Qt.resolvedUrl("./pages/SettingsPage.qml"), {
                                initial: true
                            })
         } else {
-            pageStack.push(Qt.resolvedUrl("MusicFeed.qml"));
+            pageStack.push(Qt.resolvedUrl("./pages/MusicFeed.qml"));
         }
     }
 
