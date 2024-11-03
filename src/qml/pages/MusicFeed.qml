@@ -82,7 +82,9 @@ Kirigami.ScrollablePage {
             icon.name: "search"
             onTriggered: {
                 console.log("search");
-                _displaySearch = !_displaySearch;
+                if (grdAlbums.atYBeginning) {
+                    _displaySearch = !_displaySearch;
+                }
                 if (_displaySearch) {
                     grdAlbums.positionViewAtBeginning()
                 }
