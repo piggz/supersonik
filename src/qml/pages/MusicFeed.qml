@@ -132,6 +132,18 @@ Kirigami.ScrollablePage {
                     onTriggered: {
                         mediaPlayer.addAlbum(albumid)
                     }
+                },
+                Kirigami.Action {
+                    icon.source: starred ? Qt.resolvedUrl("../pics/star-filled.png") : Qt.resolvedUrl("../pics/star-outline.png")
+                    onTriggered: {
+                        if (starred) {
+                            unStarAlbum(albumid)
+                            starred = "";
+                        } else {
+                            starAlbum(albumid)
+                            starred =  "true"
+                        }
+                    }
                 }
             ]
             banner {
@@ -262,6 +274,16 @@ Kirigami.ScrollablePage {
         doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
+    function starAlbum(albumId) {
+        console.log("starAlbum", albumId);
+        doRequest(buildSubsonicUrl("star?albumId=" + albumId),  "GET", parseStar, albumId );
+    }
+
+    function unStarAlbum(albumId) {
+        console.log("starAlbum", albumId);
+        doRequest(buildSubsonicUrl("unstar?albumId=" + albumId),  "GET", parseUnStar, albumId );
+    }
+
     function parseAlbumList(xhr) {
         console.log(xhr.response);
         var res = xhr.responseXML;
@@ -287,7 +309,7 @@ Kirigami.ScrollablePage {
                     if ( song.nodeName ===  "album") {
                         albums.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
                                           "year": attributeValue(song, "year"),"albumid": attributeValue(song, "id"),
-                                          "coverArt": attributeValue(song, "coverArt")})
+                                          "coverArt": attributeValue(song, "coverArt"), "starred": attributeValue(song, "starred")})
                     }
 
                 }
@@ -331,4 +353,50 @@ Kirigami.ScrollablePage {
         }
     }
 
+    function parseStar(xhr) {
+        console.log(xhr.response, xhr.param);
+
+        var res = xhr.responseXML;
+        var albumId = xhr.param;
+
+        if (!albumId) {
+            console.log("No albumId in repsonse");
+            return;
+        }
+
+        if (attributeValue(res.documentElement, "status") !== "ok") {
+            console.log("Album", xhr.param, "star failed");
+
+            for( var i = 0; i < albums.rowCount(); i++ ) {
+                console.log( albums.get(i).albumid,  albums.get(i).starred);
+                if (albums.get(i).albumid === albumId) {
+                    albums.setProperty(i, "starred", false);
+                }
+            }
+        }
+    }
+
+
+    function parseUnStar(xhr) {
+        console.log(xhr.response, xhr.param);
+
+        var res = xhr.responseXML;
+        var albumId = xhr.param;
+
+        if (!albumId) {
+            console.log("No albumId in repsonse");
+            return;
+        }
+
+        if (attributeValue(res.documentElement, "status") !== "ok") {
+            console.log("Album", xhr.param, "unstar failed");
+
+            for( var i = 0; i < albums.rowCount(); i++ ) {
+                console.log( albums.get(i).albumid,  albums.get(i).starred);
+                if (albums.get(i).albumid === albumId) {
+                    albums.setProperty(i, "starred", "true");
+                }
+            }
+        }
+    }
 }

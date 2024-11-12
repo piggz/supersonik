@@ -174,14 +174,15 @@ Kirigami.ApplicationWindow {
         }
     }
 
-    function doRequest(url, method, callback) {
-        console.log("doRequest:", url, method);
+    function doRequest(url, method, callback, param) {
+        console.log("doRequest:", url, method, param);
 
         var xhr = new XMLHttpRequest()
+        xhr.param = param;
         xhr.onreadystatechange = (function (response) {
             return function () {
                 if (xhr.readyState === XMLHttpRequest.DONE)
-                    callback(response)
+                    callback(response);
             }
         })(xhr)
         xhr.open(method, url, true)

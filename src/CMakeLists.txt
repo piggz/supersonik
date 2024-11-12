@@ -12,6 +12,8 @@ ecm_add_qml_module(supersonik
     RESOURCES
     qml/pics/cassette.png
     qml/pics/artist.png
+    qml/pics/star-outline.png
+    qml/pics/star-filled.png
 )
 
 target_sources(supersonik
