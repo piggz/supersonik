@@ -1,0 +1,50 @@
+name: Flatpak Build
+
+on: [push, pull_request]
+
+jobs:
+  build-linux-flatpak-dev:
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: supersonik
+        submodules: true
+
+    - uses: actions/checkout@v4
+      with:
+        path: uk.co.piggz.supersonik
+        repository: flathub/uk.co.piggz.supersonik
+
+    - name: Set up Ubuntu runner
+      run: sudo apt-get --quiet update --yes
+
+    - name: Install Flatpak and flatpak-builder
+      run: sudo apt-get --quiet install --yes flatpak flatpak-builder
+
+    - name: Add the Flathub repository
+      run: sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+    - name: Install KDE SDK
+      run: sudo flatpak install -y flathub org.kde.Platform//6.7 org.kde.Sdk//6.7
+
+    - name: Use dir instead of git tag in flatpak json
+      run: |
+        jq 'walk(if type == "object" and .url == "https://github.com/piggz/supersonik.git" then .type = "dir" | .path = "../supersonik" | del(.url, .branch, .commit, .tag) else . end)' ${{ github.workspace }}/uk.co.piggz.supersonik/uk.co.piggz.supersonik.json > ${{ github.workspace }}/uk.co.piggz.supersonik/uk.co.piggz.supersonik-ci.json
+
+    - name: Build development snapshot and package as Flatpak
+      run: |
+        cd ${{ github.workspace }}/uk.co.piggz.supersonik
+        flatpak-builder --repo=${{ github.workspace }}/repo --verbose --force-clean --ccache ${{ github.workspace }}/_build ${{ github.workspace }}/uk.co.piggz.supersonik/uk.co.piggz.supersonik-ci.json
+
+    - name: Export Flatpak as single file bundle
+      run: |
+        flatpak build-bundle ${{ github.workspace }}/repo ${{ github.workspace }}/uk.co.piggz.supersonik.flatpak uk.co.piggz.supersonik
+
+    - name: Upload Flatpak
+      uses: actions/upload-artifact@v4
+      with:
+        pattern: uk.co.piggz.supersonik.flatpak
+        path: uk.co.piggz.supersonik.flatpak
