@@ -26,7 +26,7 @@ Item {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", parseAlbum);
     }
 
-    function addDownload(id, suffix, name, albumId, albumName, artistId, artistName, coverArt) {
+    function addDownload(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year) {
         console.log("addDownload", id);
 
         let item = {
@@ -37,7 +37,9 @@ Item {
             albumName: albumName,
             artistId: artistId,
             artistName: artistName,
-            coverArt: coverArt
+            coverArt: coverArt,
+            duration: duration,
+            year: year
         }
         downloadQueue.append(item);
         doRequest(root.buildSubsonicUrl("download?id=" + id), "GET", downloadComplete, id + "." + suffix, "arrayBuffer");
@@ -67,7 +69,8 @@ Item {
                         addDownload(attributeValue(song, "id"), attributeValue(song, "suffix"), attributeValue(song, "title"),
                                     attributeValue(song, "albumId"), attributeValue(song, "album"),
                                     attributeValue(song, "artistId"), attributeValue(song, "artist"),
-                                    attributeValue(song, "coverArt"));
+                                    attributeValue(song, "coverArt"), attributeValue(song, "duration"),
+                                    attributeValue(song, "year"));
                     }
 
                 }
@@ -87,7 +90,6 @@ Item {
             var rec;
             for( var i = 0; i < downloadQueue.rowCount(); i++ ) {
                 rec = downloadQueue.get(i);
-                console.log("checking ", rec.id, rec.suffix);
                 if ((rec.id + "." + rec.suffix) == xhr.param) {
                     found = true;
                     break;
@@ -106,14 +108,14 @@ Item {
     }
 
     function addRecord(rec) {
-        console.log("Adding record:", rec);
+        console.log("Adding record:", rec.id);
         var db = openDatabase();
         var success = true;
 
         try {
             db.transaction(function (tx) {
-                tx.executeSql('INSERT INTO tracks(id, suffix, name, albumId, albumName, artistId, artistName, coverArt) VALUES(?, ?, ?, ?, ?, ?, ?, ?);',
-                              [rec.id, rec.suffix, rec.name, rec.albumId, rec.albumName, rec.artistId, rec.artistName, rec.coverArt]);
+                tx.executeSql('INSERT INTO tracks(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                              [rec.id, rec.suffix, rec.name, rec.albumId, rec.albumName, rec.artistId, rec.artistName, rec.coverArt, rec.duration, rec.year]);
 
             })
         } catch (err) {
@@ -130,7 +132,7 @@ Item {
 
         try {
             db.transaction(function (tx) {
-                var rs = tx.executeSql('SELECT id, name, albumId, albumName, artistId, artistName, coverArt, suffix from tracks WHERE albumId=?', [albumId]);
+                var rs = tx.executeSql('SELECT id, name, albumId, albumName, artistId, artistName, coverArt, suffix, duration, year from tracks WHERE albumId=?', [albumId]);
 
                 for (var i = 0; i < rs.rows.length; i++) {
                     songs.push(rs.rows.item(i));
@@ -168,7 +170,7 @@ Item {
 
         try {
             db.transaction(function (tx) {
-                tx.executeSql('CREATE TABLE IF NOT EXISTS tracks (id text unique, name text, suffix text, albumId text, albumName text, artistId text, artistName text, coverArt text);')
+                tx.executeSql('CREATE TABLE IF NOT EXISTS tracks (id text unique, name text, suffix text, albumId text, albumName text, artistId text, artistName text, coverArt text, duration integer, year text);')
             })
         } catch (err) {
             console.log("Error creating table in database: " + err)

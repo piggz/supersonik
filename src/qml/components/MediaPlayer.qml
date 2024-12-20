@@ -241,9 +241,10 @@ Rectangle {
         songs.forEach(s => {
                           console.log(s.name, s.artistName, s.id, s.albumId, s.albumName);
                           playlist.append({"title": s.name, "artist": s.artistName,
-                                              "year": "", "duration": 0,
                                               "songid": s.id, "albumid": s.albumId,
                                               "albumtitle": s.albumName,
+                                              "duration": s.duration,
+                                              "year": s.year,
                                               "url": "file://" + FileIO.filePath(s.id + "." + s.suffix)})
                       });
 
@@ -257,9 +258,10 @@ Rectangle {
         songs.forEach(s => {
                           console.log(s.name, s.artistName, s.id, s.albumId, s.albumName);
                           playlist.append({"title": s.name, "artist": s.artistName,
-                                              "year": "", "duration": 0,
                                               "songid": s.id, "albumid": s.albumId,
                                               "albumtitle": s.albumName,
+                                              "duration": s.duration,
+                                              "year": s.year,
                                               "url": "file://" + FileIO.filePath(s.id + "." + s.suffix)})
                       });
     }
