@@ -143,7 +143,11 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: "media-playlist-append"
                     onTriggered: {
-                        mediaPlayer.addAlbum(albumid)
+                        if (_offlineMode) {
+                            mediaPlayer.addAlbumOffline(albumid)
+                        } else {
+                            mediaPlayer.addAlbum(albumid)
+                        }
                     }
                 },
                 Kirigami.Action {

@@ -251,6 +251,19 @@ Rectangle {
         playFile(0)
     }
 
+    function addAlbumOffline(albumId) {
+        var songs = offlineFiles.songs(albumId);
+
+        songs.forEach(s => {
+                          console.log(s.name, s.artistName, s.id, s.albumId, s.albumName);
+                          playlist.append({"title": s.name, "artist": s.artistName,
+                                              "year": "", "duration": 0,
+                                              "songid": s.id, "albumid": s.albumId,
+                                              "albumtitle": s.albumName,
+                                              "url": "file://" + FileIO.filePath(s.id + "." + s.suffix)})
+                      });
+    }
+
     function replaceAlbum(albumId) {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postReplaceAlbum );
     }
