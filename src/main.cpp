@@ -1,13 +1,14 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
-#include <QtQml>
 #include <QUrl>
+#include <QQmlContext>
 #include <QQuickStyle>
 #include <KLocalizedContext>
 #include <KLocalizedString>
 #include <KIconTheme>
 
 #include "Helper.h"
+#include "fileio.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,6 +28,10 @@ int main(int argc, char *argv[])
 
     qmlRegisterSingletonType<Helper>("uk.co.piggz", 1, 0, "Helper", [](QQmlEngine *, QJSEngine *) {
         return new Helper;
+    });
+
+    qmlRegisterSingletonType<FileIO>("uk.co.piggz", 1, 0, "FileIO", [](QQmlEngine *, QJSEngine *) {
+        return new FileIO;
     });
 
     engine.loadFromModule("uk.co.piggz.supersonik", "Main");

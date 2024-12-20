@@ -6,8 +6,6 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15 as Controls
 import org.kde.kirigami 2.20 as Kirigami
-import org.kde.kirigamiaddons.formcard as FormCard
-import QtQml.XmlListModel
 
 import uk.co.piggz 1.0
 
@@ -30,7 +28,17 @@ Kirigami.ScrollablePage {
 
     GridView {
         id: grdAlbums
-        model: _displayArtist ? artists : albums
+        model: {
+            console.log(_offlineMode);
+            if (_offlineMode) {
+                return offlineFiles.albumModel
+            } else if (_displayArtist) {
+                return artists;
+            } else {
+                return albums;
+            }
+        }
+
         delegate: _displayArtist ? artistDelegate : albumDelegate
         anchors.fill: parent
         anchors.bottomMargin: 50
@@ -74,6 +82,7 @@ Kirigami.ScrollablePage {
             }
         }
     }
+
 
     actions: [
         Kirigami.Action {
@@ -144,7 +153,14 @@ Kirigami.ScrollablePage {
                             starred =  "true"
                         }
                     }
+                },
+                Kirigami.Action {
+                    icon.name: "download"
+                    onTriggered: {
+                        offlineFiles.downloadAlbum(albumid);
+                    }
                 }
+
             ]
             banner {
                 source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/cassette.png")
@@ -343,8 +359,8 @@ Kirigami.ScrollablePage {
                     console.log(artist.nodeName);
                     if ( artist.nodeName ===  "artist") {
                         artists.append({"name": attributeValue(artist, "name"),
-                                          "artistImage": attributeValue(artist, "artistImageUrl"),"artistId": attributeValue(artist, "id"),
-                                          "coverArt": attributeValue(artist, "coverArt")})
+                                           "artistImage": attributeValue(artist, "artistImageUrl"),"artistId": attributeValue(artist, "id"),
+                                           "coverArt": attributeValue(artist, "coverArt")})
                     }
                 }
             }

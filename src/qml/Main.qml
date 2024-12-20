@@ -25,6 +25,9 @@ Kirigami.ApplicationWindow {
     property string _username: ""
     property string _password: ""
     property int mpHeight: mediaPlayer.height
+    property bool _displayMessage: false
+    property string _messageText: ""
+    property bool _offlineMode: false
 
     pageStack {
         defaultColumnWidth: Kirigami.Units.gridUnit * 20
@@ -96,8 +99,50 @@ Kirigami.ApplicationWindow {
                 onTriggered: {
                     root.pageStack.pushDialogLayer(Qt.resolvedUrl("./pages/SettingsPage.qml"))
                 }
+            },
+            Kirigami.Action {
+                displayComponent: Controls.Switch {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Offline Mode"
+                    checked: _offlineMode
+                    onCheckedChanged: {
+                        _offlineMode = checked;
+                    }
+                }
+
             }
         ]
+    }
+
+    function showMessage(msg) {
+        _messageText = msg;
+        _displayMessage = true;
+        inlineMessage.type = Kirigami.MessageType.Information
+        tmrHideMessage.restart();
+    }
+
+    function showError(msg) {
+        _messageText = msg;
+        _displayMessage = true;
+        inlineMessage.type = Kirigami.MessageType.Error
+        tmrHideMessage.restart();
+    }
+
+    Kirigami.InlineMessage {
+        id: inlineMessage
+        width: parent.width
+        visible: _displayMessage
+        text: _messageText
+    }
+
+    Timer {
+        id: tmrHideMessage
+        repeat: false
+        interval: 2000
+
+        onTriggered: {
+            _displayMessage = false
+        }
     }
 
     MediaPlayer {
@@ -151,6 +196,10 @@ Kirigami.ApplicationWindow {
         }
     }
 
+    OfflineFiles {
+        id: offlineFiles
+    }
+
     Component.onCompleted: {
         console.log("Loading Settings");
         _serverURL = Helper.getSetting("serverURL", "");
@@ -174,8 +223,8 @@ Kirigami.ApplicationWindow {
         }
     }
 
-    function doRequest(url, method, callback, param) {
-        console.log("doRequest:", url, method, param);
+    function doRequest(url, method, callback, param, responseType) {
+        console.log("doRequest:", url, method, param, responseType);
 
         var xhr = new XMLHttpRequest()
         xhr.param = param;
@@ -186,6 +235,9 @@ Kirigami.ApplicationWindow {
             }
         })(xhr)
         xhr.open(method, url, true)
+        if (responseType) {
+            xhr.responseType = responseType;
+        }
         xhr.send('')
     }
 

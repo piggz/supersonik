@@ -1,5 +1,4 @@
-add_executable(supersonik
-    qml/components/MediaPlayer.qml)
+add_executable(supersonik)
 
 ecm_add_qml_module(supersonik
     URI
@@ -9,6 +8,7 @@ ecm_add_qml_module(supersonik
     qml/pages/SettingsPage.qml
     qml/pages/MusicFeed.qml
     qml/components/MediaPlayer.qml
+    qml/components/OfflineFiles.qml
     RESOURCES
     qml/pics/cassette.png
     qml/pics/artist.png
@@ -20,6 +20,7 @@ target_sources(supersonik
     PRIVATE
     main.cpp
     Helper.cpp
+    fileio.cpp
 )
 
 target_link_libraries(supersonik
