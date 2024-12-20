@@ -39,3 +39,19 @@ bool FileIO::rm(const QString &source)
     }
     return false;
 }
+
+QString FileIO::filePath(const QString &source)
+{
+    qDebug() << Q_FUNC_INFO << source;
+    if (source.isEmpty())
+        return QString();
+
+    QString cacheDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/cache/");
+
+    QFile f(cacheDir + source);
+    if (f.exists()) {
+        qDebug() << QLatin1String(f.filesystemFileName().c_str());
+        return QLatin1String(f.filesystemFileName().c_str());
+    }
+    return QString();
+}

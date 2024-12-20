@@ -123,20 +123,39 @@ Item {
         return success;
     }
 
+    function songs(albumId) {
+        console.log("Loading offline songs", albumId);
+        var db = openDatabase();
+        var songs = [];
+
+        try {
+            db.transaction(function (tx) {
+                var rs = tx.executeSql('SELECT id, name, albumId, albumName, artistId, artistName, coverArt, suffix from tracks WHERE albumId=?', [albumId]);
+
+                for (var i = 0; i < rs.rows.length; i++) {
+                    songs.push(rs.rows.item(i));
+                }
+            })
+        } catch (err) {
+            console.log("Error loading offline albums: " + err)
+        };
+        return songs;
+    }
+
     function loadOfflineAlbums() {
         console.log("Loading offline albums");
         var db = openDatabase();
 
         try {
             db.transaction(function (tx) {
-                var rs = tx.executeSql('SELECT albumId, albumName, artistName, min(coverArt) as coverArt from tracks GROUP BY albumId, albumName, artistName');
+                var rs = tx.executeSql('SELECT albumId, albumName, min(artistName) as artistName, min(coverArt) as coverArt from tracks GROUP BY albumId, albumName');
 
                 albumModel.clear();
 
                 for (var i = 0; i < rs.rows.length; i++) {
                     albumModel.append({"title": rs.rows.item(i).albumName, "artist": rs.rows.item(i).artistName,
                                                               "year": "","albumid": rs.rows.item(i).albumId,
-                                                              "coverArt": rs.rows.item(i).coverArt, "starred": ""})
+                                                              "coverArt": rs.rows.item(i).coverArt, "starred": ""});
                 }
             })
         } catch (err) {

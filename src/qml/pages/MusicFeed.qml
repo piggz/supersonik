@@ -133,7 +133,11 @@ Kirigami.ScrollablePage {
                 Kirigami.Action {
                     icon.name: "media-playback-start"
                     onTriggered: {
-                        mediaPlayer.replaceAlbum(albumid)
+                        if (_offlineMode) {
+                            mediaPlayer.replaceAlbumOffline(albumid)
+                        } else {
+                            mediaPlayer.replaceAlbum(albumid)
+                        }
                     }
                 },
                 Kirigami.Action {
@@ -144,6 +148,7 @@ Kirigami.ScrollablePage {
                 },
                 Kirigami.Action {
                     icon.source: starred ? Qt.resolvedUrl("../pics/star-filled.png") : Qt.resolvedUrl("../pics/star-outline.png")
+                    visible: !_offlineMode
                     onTriggered: {
                         if (starred) {
                             unStarAlbum(albumid)
@@ -156,6 +161,7 @@ Kirigami.ScrollablePage {
                 },
                 Kirigami.Action {
                     icon.name: "download"
+                    visible: !_offlineMode
                     onTriggered: {
                         offlineFiles.downloadAlbum(albumid);
                     }

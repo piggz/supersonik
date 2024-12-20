@@ -234,6 +234,23 @@ Rectangle {
         }
     }
 
+    function replaceAlbumOffline(albumId) {
+        playlist.clear();
+        var songs = offlineFiles.songs(albumId);
+
+        songs.forEach(s => {
+                          console.log(s.name, s.artistName, s.id, s.albumId, s.albumName);
+                          playlist.append({"title": s.name, "artist": s.artistName,
+                                              "year": "", "duration": 0,
+                                              "songid": s.id, "albumid": s.albumId,
+                                              "albumtitle": s.albumName,
+                                              "url": "file://" + FileIO.filePath(s.id + "." + s.suffix)})
+                      });
+
+
+        playFile(0)
+    }
+
     function replaceAlbum(albumId) {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postReplaceAlbum );
     }
@@ -258,7 +275,7 @@ Rectangle {
         currentAlbum = song.albumtitle;
         currentYear = song.year;
 
-        var url = buildSubsonicUrl("stream?id=" + song.songid)
+        var url = song.url
         console.log(url);
 
         sldPosition.to = song.duration
@@ -300,7 +317,7 @@ Rectangle {
                         playlist.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
                                             "year": attributeValue(song, "year"), "duration": attributeValue(song, "duration"),
                                             "songid": attributeValue(song, "id"), "albumid": attributeValue(song, "albumId"),
-                                            "albumtitle": attributeValue(song, "album")})
+                                            "albumtitle": attributeValue(song, "album"), "url": buildSubsonicUrl("stream?id=" + attributeValue(song, "id"))})
                     }
 
                 }

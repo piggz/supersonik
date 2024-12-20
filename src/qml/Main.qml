@@ -106,6 +106,10 @@ Kirigami.ApplicationWindow {
                     text: "Offline Mode"
                     checked: _offlineMode
                     onCheckedChanged: {
+                        if (checked) {
+                            offlineFiles.loadOfflineAlbums();
+                        }
+
                         _offlineMode = checked;
                     }
                 }
