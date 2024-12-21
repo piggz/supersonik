@@ -42,7 +42,7 @@ Kirigami.ApplicationWindow {
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
-        isMenu: true
+        isMenu: false
         actions: [
             Kirigami.Action {
                 text: i18nc("@action:button", "All Albums by Name")
@@ -101,19 +101,16 @@ Kirigami.ApplicationWindow {
                 }
             },
             Kirigami.Action {
-                displayComponent: Controls.Switch {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "Offline Mode"
-                    checked: _offlineMode
-                    onCheckedChanged: {
-                        if (checked) {
-                            offlineFiles.loadOfflineAlbums();
-                        }
-
-                        _offlineMode = checked;
+                text: i18nc("@action:button", "Offline Mode")
+                icon.name: "offline-symbolic"
+                checkable: true
+                onCheckedChanged: {
+                    if (checked) {
+                        offlineFiles.loadOfflineAlbums();
                     }
-                }
 
+                    _offlineMode = checked;
+                }
             }
         ]
     }
@@ -165,7 +162,6 @@ Kirigami.ApplicationWindow {
         identity: "Supersonik Media Player"
 
         playbackStatus: {
-            console.log("xx", mediaPlayer.playbackState);
             switch (mediaPlayer.playbackState) {
             case QTMM.MediaPlayer.PlayingState:
                 return Mpris.Playing
