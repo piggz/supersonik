@@ -61,6 +61,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "Random Albums")
                 icon.name: "media-playlist-shuffle"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("random")
                 }
@@ -68,6 +69,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "Favorite Albums")
                 icon.name: "view-media-favorite"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("starred")
                 }
@@ -75,6 +77,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "Latest Albums")
                 icon.name: "view-media-recent"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("newest")
                 }
@@ -82,6 +85,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "Top Rated Albums")
                 icon.name: "view-media-playcount"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("highest")
                 }
@@ -89,6 +93,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "Frequently Played Albums")
                 icon.name: "media-playlist-play"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("frequent")
                 }
