@@ -1,5 +1,5 @@
 Name:		harbour-supersonik
-Version:	0.0.1
+Version:	0.1.0
 Release:	0
 Summary:	Subsonic music client
 License:	GPLv3
