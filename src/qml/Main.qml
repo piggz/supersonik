@@ -109,12 +109,14 @@ Kirigami.ApplicationWindow {
                 text: i18nc("@action:button", "Offline Mode")
                 icon.name: "offline-symbolic"
                 checkable: true
+                checked: _offlineMode
                 onCheckedChanged: {
                     if (checked) {
                         offlineFiles.loadOfflineAlbums();
                     }
 
                     _offlineMode = checked;
+                    Helper.setSetting("offlineMode", _offlineMode);
                 }
             }
         ]
@@ -210,6 +212,8 @@ Kirigami.ApplicationWindow {
         _serverURL = Helper.getSetting("serverURL", "");
         _username = Helper.getSetting("username", "");
         _password = Helper.getSetting("password", "");
+
+        _offlineMode = Helper.getSetting("offlineMode", false);
 
         if (!_serverURL || !_username || !_password) {
             pageStack.push(Qt.resolvedUrl("./pages/SettingsPage.qml"), {

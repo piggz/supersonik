@@ -10,7 +10,11 @@ Helper::Helper(QObject *parent) :
 
 QVariant Helper::getSetting(const QString &settingname, QVariant def)
 {
-    return settings.value(QStringLiteral("settings/") + settingname, def);
+    QVariant v = settings.value(QStringLiteral("settings/") + settingname, def);
+    if (v.toString().toLower() == QStringLiteral("false") || v.toString().toLower() == QStringLiteral("true")) {
+        return v.toBool();
+    }
+    return v;
 }
 
 void Helper::setSetting(const QString &settingname, QVariant val)
