@@ -250,7 +250,11 @@ Kirigami.ScrollablePage {
 
     function pageTitle() {
         if (listType == "alphabeticalByName") {
-            return i18n("Albums by Name")
+            if (_offlineMode) {
+                return i18n("Albums by Name (offline)")
+            } else {
+                return i18n("Albums by Name")
+            }
         }
         if (listType == "alphabeticalByArtist") {
             return i18n("Albums by Artist")

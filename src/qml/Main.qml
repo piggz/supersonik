@@ -54,6 +54,7 @@ Kirigami.ApplicationWindow {
             Kirigami.Action {
                 text: i18nc("@action:button", "All Albums by Artist")
                 icon.name: "view-media-artist"
+                enabled: !_offlineMode
                 onTriggered: {
                     switchList("alphabeticalByArtist")
                 }
