@@ -24,6 +24,7 @@ Kirigami.ApplicationWindow {
     property string _serverURL: ""
     property string _username: ""
     property string _password: ""
+    property bool _legacyAuth: false
     property int mpHeight: mediaPlayer.height
     property bool _displayMessage: false
     property string _messageText: ""
@@ -213,6 +214,7 @@ Kirigami.ApplicationWindow {
         _serverURL = Helper.getSetting("serverURL", "");
         _username = Helper.getSetting("username", "");
         _password = Helper.getSetting("password", "");
+        _legacyAuth = Helper.getSetting("legacyAuth", false);
 
         _offlineMode = Helper.getSetting("offlineMode", false);
 
@@ -257,8 +259,14 @@ Kirigami.ApplicationWindow {
         if (path.indexOf("?") > 0) {
             qry = "&";
         }
-
-        return _serverURL + "/rest/" + path + qry + "u=" + _username + "&t=" + Helper.md5(_password + salt) + "&s=" + salt + "&v=1.16.0" + "&c=supersonik"
+        
+        if (_legacyAuth) {
+            return _serverURL + "/rest/" + path + qry + "u=" + _username + "&p=" + _password + "&v=1.15.0" + "&c=supersonik"
+        }
+        else {
+            return _serverURL + "/rest/" + path + qry + "u=" + _username + "&t=" + Helper.md5(_password + salt) + "&s=" + salt + "&v=1.16.0" + "&c=supersonik"
+        }
+        
     }
 
     function attributeValue(node, attribute) {

@@ -56,6 +56,18 @@ Kirigami.ScrollablePage {
                 echoMode: TextInput.PasswordEchoOnEdit
             }
 
+            FormCard.FormDelegateSeparator {}
+
+            FormCard.FormCheckDelegate {
+                id:chkLegacyAuth
+                text: i18n("Use Legacy Authentication")
+                onToggled: {
+                    _legacyAuth = checkState
+
+                    saveSettings();
+                }
+            }
+
             FormCard.FormDelegateSeparator { above: btnContinue }
 
             FormCard.FormButtonDelegate {
@@ -65,6 +77,7 @@ Kirigami.ScrollablePage {
                     _serverURL = txtServerURL.text;
                     _username = txtUsername.text;
                     _password = txtPassword.text;
+                    _legacyAuth = chkLegacyAuth.checkState;
 
                     saveSettings();
 
@@ -113,8 +126,9 @@ Kirigami.ScrollablePage {
         _serverURL = Helper.getSetting("serverURL", "");
         _username = Helper.getSetting("username", "");
         _password = Helper.getSetting("password", "");
+        _legacyAuth = Helper.getSetting("legacyAuth", false);
 
-        console.log(_serverURL, _username, _password);
+        console.log(_serverURL, _username, _password, _legacyAuth);
 
         if (_serverURL != "") {
             txtServerURL.text = _serverURL;
@@ -127,6 +141,10 @@ Kirigami.ScrollablePage {
         if (_password != "") {
             txtPassword.text = _password;
         }
+
+        if (_legacyAuth) {
+            chkLegacyAuth.checkState = Qt.Checked;
+        }
     }
 
     function saveSettings() {
@@ -134,7 +152,8 @@ Kirigami.ScrollablePage {
         Helper.setSetting("serverURL", _serverURL);
         Helper.setSetting("username", _username);
         Helper.setSetting("password", _password);
+        Helper.setSetting("legacyAuth", _legacyAuth);
 
-        console.log(_serverURL, _username, _password);
+        console.log(_serverURL, _username, _password, _legacyAuth);
     }
 }
