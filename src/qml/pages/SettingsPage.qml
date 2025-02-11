@@ -23,10 +23,6 @@ Kirigami.ScrollablePage {
     ColumnLayout {
         width: parent.width
 
-        FormCard.FormHeader {
-            title: i18n("Server Configuration")
-        }
-
         FormCard.FormCard {
             Layout.topMargin: Kirigami.Units.largeSpacing
             Layout.fillWidth: true
@@ -72,7 +68,7 @@ Kirigami.ScrollablePage {
                 }
             }
 
-            FormCard.FormDelegateSeparator {}
+            FormCard.FormDelegateSeparator { above: btnContinue }
 
             FormCard.FormButtonDelegate {
                 id: btnContinue
@@ -96,11 +92,9 @@ Kirigami.ScrollablePage {
                 text: _serverMessage
             }
 
-            FormCard.FormDelegateSeparator {}
-
-            FormCard.FormSwitchDelegate {
-                id:switchCustomPath
-                text: i18n("Custom Download Path")
+            Item {
+                width: parent.width
+                height: page.height / 2
             }
         }
     }
