@@ -173,7 +173,7 @@ Kirigami.ScrollablePage {
 
             ]
             banner {
-                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/cassette.png")
+                source: artUrl
                 title: title
                 implicitHeight: width
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
@@ -190,7 +190,6 @@ Kirigami.ScrollablePage {
                 }
             }
         }
-
     }
 
     Component {
@@ -337,9 +336,17 @@ Kirigami.ScrollablePage {
 
                     console.log(song.nodeName);
                     if ( song.nodeName ===  "album") {
-                        albums.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
-                                          "year": attributeValue(song, "year"),"albumid": attributeValue(song, "id"),
-                                          "coverArt": attributeValue(song, "coverArt"), "starred": attributeValue(song, "starred")})
+                        var title = attributeValue(song, "title")
+                        if(!title) {
+                            title = attributeValue(song, "name")
+                        }
+                        var coverArt = attributeValue(song, "coverArt")
+                        var artist = attributeValue(song, "artist")
+                        var albumid = attributeValue(song, "id")
+                        albums.append({"title": title, "artist": artist,
+                                          "year": attributeValue(song, "year"),"albumid": albumid,
+                                          "coverArt": attributeValue(song, "coverArt"), "starred": attributeValue(song, "starred"),
+                                          "artUrl": albumArt.getAlbumArtUrl(coverArt, artist, title, albumid, updateAlbumArt)})
                     }
 
                 }
@@ -426,6 +433,14 @@ Kirigami.ScrollablePage {
                 if (albums.get(i).albumid === albumId) {
                     albums.setProperty(i, "starred", "true");
                 }
+            }
+        }
+    }
+
+    function updateAlbumArt(albumId, newArtUrl) {
+        for( var i = 0; i < albums.rowCount(); i++ ) {
+            if (albums.get(i).albumid === albumId) {
+                albums.setProperty(i, "artUrl", newArtUrl);
             }
         }
     }
