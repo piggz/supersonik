@@ -173,7 +173,7 @@ Kirigami.ScrollablePage {
 
             ]
             banner {
-                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/cassette.png")
+                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : buildLastFmCoverArtUrl(artist, title, albumid)
                 title: title
                 implicitHeight: width
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
@@ -337,7 +337,7 @@ Kirigami.ScrollablePage {
 
                     console.log(song.nodeName);
                     if ( song.nodeName ===  "album") {
-                        albums.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
+                        albums.append({"title": attributeValue(song, "name"), "artist": attributeValue(song, "artist"),
                                           "year": attributeValue(song, "year"),"albumid": attributeValue(song, "id"),
                                           "coverArt": attributeValue(song, "coverArt"), "starred": attributeValue(song, "starred")})
                     }
