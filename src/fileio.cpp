@@ -20,8 +20,6 @@ bool FileIO::write(const QString &source, const QByteArray& data)
         return false;
     }
 
-    printf("data %x %x %x %x\r\n", data[0], data[1], data[2], data[3]);
-
     file.write(data);
     file.close();
     return true;

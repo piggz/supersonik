@@ -173,7 +173,7 @@ Kirigami.ScrollablePage {
 
             ]
             banner {
-                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : fetchLastFmCoverArtUrl(artist, title, albumid)
+                source: albumArt.getAlbumArtUrl(coverArt, artist, title, albumid)
                 title: title
                 implicitHeight: width
                 titleAlignment: Qt.AlignLeft | Qt.AlignBottom
