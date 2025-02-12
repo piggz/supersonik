@@ -22,11 +22,11 @@ Item {
         return elements;
     }
 
-    function downloadComplete(xhr) {
+    function downloadComplete(xhr, callback, albumid) {
         console.log("downloadComplete:", xhr.param);
 
         if (FileIO.write(xhr.param, xhr.response)) {
-
+            callback(albumid, "file:" + FileIO.filePath(xhr.param))
         } else {
             showMessage("Error saving " + xhr.param);
         }
@@ -36,19 +36,31 @@ Item {
         return url.split(/[#?]/)[0].split('.').pop().trim();
     }
 
-    function onLastFmCoverArtResponse(artist, album, imageSize, response) {
+    function onLastFmCoverArtResponse(artist, album, imageSize, response, callback, albumid) {
         var elements = []
         getElementsByTagName(response, "image", elements)
         for(var i = 0; i < elements.length; i++) {
             if(elements[i].attributes[0].name === "size" && elements[i].attributes[0].value === imageSize) {
                 var url = elements[i].childNodes[0].nodeValue
                 var extension = get_url_extension(url)
-                doRequest(url, "GET", downloadComplete, FileIO.makeFilename(artist + "_" + album + "." + extension), "arrayBuffer");
+
+                var xhr = new XMLHttpRequest()
+                xhr.param = FileIO.makeFilename(artist + "_" + album + "." + extension)
+                xhr.responseType = "arrayBuffer"
+                xhr.onreadystatechange = (function (response) {
+                    return function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            downloadComplete(xhr, callback, albumid)
+                        }
+                    }
+                })(xhr)
+                xhr.open("GET", url, true)
+                xhr.send('')
             }
         }
     }
     
-    function fetchLastFmCoverArtUrl(artist, album, albumid) {
+    function fetchLastFmCoverArtUrl(artist, album, albumid, callback) {
         var xhr = new XMLHttpRequest()
         const apiKey = "4b724a8d125b0c56965ad3e28a51530c";
         const imageSize = "large";
@@ -58,7 +70,7 @@ Item {
         xhr.onreadystatechange = (function (response) {
             return function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
-                    onLastFmCoverArtResponse(artist, album, imageSize, xhr.responseXML.documentElement)
+                    onLastFmCoverArtResponse(artist, album, imageSize, xhr.responseXML.documentElement, callback, albumid)
                 }
             }
         })(xhr)
@@ -68,7 +80,7 @@ Item {
         return ""
     }
 
-    function getAlbumArtUrl(coverArt, artist, album, albumid) {
+    function getAlbumArtUrl(coverArt, artist, album, albumid, callback) {
         var url = Qt.resolvedUrl("../pics/cassette.png")
         
         if(coverArt) {
@@ -80,8 +92,8 @@ Item {
             if(cached_url) {
                 url = "file:" + cached_url
             }
-            else {
-                fetchLastFmCoverArtUrl(artist, album, albumid)
+            else if(callback) {
+                fetchLastFmCoverArtUrl(artist, album, albumid, callback)
             }
         }
 
