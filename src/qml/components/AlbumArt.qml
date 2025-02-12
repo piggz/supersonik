@@ -32,14 +32,18 @@ Item {
         }
     }
 
+    function get_url_extension( url ) {
+        return url.split(/[#?]/)[0].split('.').pop().trim();
+    }
+
     function onLastFmCoverArtResponse(artist, album, imageSize, response) {
         var elements = []
         getElementsByTagName(response, "image", elements)
         for(var i = 0; i < elements.length; i++) {
             if(elements[i].attributes[0].name === "size" && elements[i].attributes[0].value === imageSize) {
                 var url = elements[i].childNodes[0].nodeValue
-
-                doRequest(url, "GET", downloadComplete, artist + "_" + album + ".jpg", "arrayBuffer");
+                var extension = get_url_extension(url)
+                doRequest(url, "GET", downloadComplete, FileIO.makeFilename(artist + "_" + album + "." + extension), "arrayBuffer");
             }
         }
     }
@@ -66,14 +70,19 @@ Item {
 
     function getAlbumArtUrl(coverArt, artist, album, albumid) {
         var url = Qt.resolvedUrl("../pics/cassette.png")
+        
         if(coverArt) {
             url = buildSubsonicUrl("getCoverArt?id=" + coverArt)
         }
-        else if(FileIO.filePath(artist + "_" + album + ".jpg")) {
-            url = "file:" + FileIO.filePath(artist + "_" + album + ".jpg")
-        }
         else {
-            fetchLastFmCoverArtUrl(artist, album, albumid)
+            var cached_url = FileIO.findFilePath(FileIO.makeFilename(artist + "_" + album))
+
+            if(cached_url) {
+                url = "file:" + cached_url
+            }
+            else {
+                fetchLastFmCoverArtUrl(artist, album, albumid)
+            }
         }
 
         return url 
