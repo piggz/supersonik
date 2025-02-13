@@ -63,7 +63,7 @@ Item {
     function fetchLastFmCoverArtUrl(artist, album, albumid, callback) {
         var xhr = new XMLHttpRequest()
         const apiKey = "4b724a8d125b0c56965ad3e28a51530c";
-        const imageSize = "large";
+        const imageSize = "mega";
         const method = "album.getinfo";
         const request = "http://ws.audioscrobbler.com/2.0/?method=" + method + "&api_key=" + apiKey + "&artist=" + artist.replace(" ", "%20") + "&album=" + album.replace(" ", "%20");
 
