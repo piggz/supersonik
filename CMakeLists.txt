@@ -36,6 +36,7 @@ if (SAILFISHOS)
     install(FILES harbour-supersonik.png DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/hicolor/86x86/apps)
 else()
     install(PROGRAMS uk.co.piggz.supersonik.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+    install(FILES supersonik.png DESTINATION ${KDE_INSTALL_FULL_ICONDIR}/)
 endif()
 
 
