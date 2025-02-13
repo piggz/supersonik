@@ -7,6 +7,7 @@ ecm_add_qml_module(supersonik
     qml/Main.qml
     qml/pages/SettingsPage.qml
     qml/pages/MusicFeed.qml
+    qml/components/AlbumArt.qml
     qml/components/MediaPlayer.qml
     qml/components/OfflineFiles.qml
     RESOURCES

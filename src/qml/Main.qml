@@ -205,6 +205,10 @@ Kirigami.ApplicationWindow {
         }
     }
 
+    AlbumArt {
+        id: albumArt
+    }
+    
     OfflineFiles {
         id: offlineFiles
     }
