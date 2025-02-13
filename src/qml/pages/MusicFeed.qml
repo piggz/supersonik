@@ -336,7 +336,10 @@ Kirigami.ScrollablePage {
 
                     console.log(song.nodeName);
                     if ( song.nodeName ===  "album") {
-                        var title = attributeValue(song, "name")
+                        var title = attributeValue(song, "title")
+                        if(!title) {
+                            title = attributeValue(song, "name")
+                        }
                         var coverArt = attributeValue(song, "coverArt")
                         var artist = attributeValue(song, "artist")
                         var albumid = attributeValue(song, "id")
