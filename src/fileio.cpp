@@ -66,8 +66,8 @@ QString FileIO::findFilePath(const QString &source)
     {
         QFile f(cacheDir + d.entryList()[0]);
         if (f.exists()) {
-            qDebug() << QLatin1String(f.filesystemFileName().c_str());
-            return QLatin1String(f.filesystemFileName().c_str());
+            qDebug() << QString::fromUtf8(f.filesystemFileName().c_str());
+            return QString::fromUtf8(f.filesystemFileName().c_str());
         }
     }
     return QString();
@@ -83,8 +83,8 @@ QString FileIO::filePath(const QString &source)
 
     QFile f(cacheDir + source);
     if (f.exists()) {
-        qDebug() << QLatin1String(f.filesystemFileName().c_str());
-        return QLatin1String(f.filesystemFileName().c_str());
+        qDebug() << QString::fromUtf8(f.filesystemFileName().c_str());
+        return QString::fromUtf8(f.filesystemFileName().c_str());
     }
     return QString();
 }
