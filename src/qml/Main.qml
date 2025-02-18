@@ -202,6 +202,7 @@ Kirigami.ApplicationWindow {
             albumArtist: mediaPlayer.currentArtist
             year: mediaPlayer.currentYear
             title: mediaPlayer.currentTitle
+            artUrl: mediaPlayer.currentAlbumArtUrl
         }
     }
 
