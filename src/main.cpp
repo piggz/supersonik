@@ -7,6 +7,9 @@
 #include <KLocalizedString>
 #include <KIconTheme>
 
+#include <QMediaDevices>
+#include <QAudioDevice>
+
 #include "Helper.h"
 #include "fileio.h"
 
@@ -39,6 +42,13 @@ int main(int argc, char *argv[])
     if (engine.rootObjects().isEmpty()) {
         return -1;
     }
+
+    qDebug() << "Audio devices:";
+    for (auto d : QMediaDevices::audioOutputs()) {
+        qDebug() << d.description();
+    }
+
+    qDebug() << "Defualt device:" << QMediaDevices::defaultAudioOutput().description();
 
     return app.exec();
 }
