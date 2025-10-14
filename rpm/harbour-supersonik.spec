@@ -17,6 +17,7 @@ BuildRequires:	kf6-kconfig-devel
 BuildRequires:	kf6-kiconthemes-devel
 BuildRequires:	kf6-kcolorscheme-devel
 BuildRequires:	qt6-qtdeclarative-devel
+BuildRequires:	qt6-qtmultimedia-devel
 
 Requires:       qt-runner-qt6
 Requires:       qt6-qtmultimedia
