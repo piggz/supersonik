@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         qDebug() << d.description();
     }
 
-    qDebug() << "Defualt device:" << QMediaDevices::defaultAudioOutput().description();
+    qDebug() << "Default device:" << QMediaDevices::defaultAudioOutput().description();
 
     return app.exec();
 }

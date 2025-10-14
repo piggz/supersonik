@@ -157,7 +157,7 @@ Item {
                 for (var i = 0; i < rs.rows.length; i++) {
                     albumModel.append({"title": rs.rows.item(i).albumName, "artist": rs.rows.item(i).artistName,
                                                               "year": "","albumid": rs.rows.item(i).albumId,
-                                                              "coverArt": rs.rows.item(i).coverArt, "starred": ""});
+                                                              "coverArt": rs.rows.item(i).coverArt, "starred": "", artUrl: Qt.resolvedUrl("../pics/cassette.png")});
                 }
             })
         } catch (err) {
