@@ -60,6 +60,13 @@ Kirigami.ScrollablePage {
                         id: txtSearch
                         Layout.fillWidth: true
                         placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
+                        Keys.onReturnPressed: {
+                            if (listType === "alphabeticalByArtist") {
+                                searchArtists(txtSearch.text);
+                            } else {
+                                searchAlbums(txtSearch.text);
+                            }
+                        }
                     }
                     Controls.ToolButton {
                         id: btnSearch
