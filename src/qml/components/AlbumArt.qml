@@ -38,7 +38,7 @@ Item {
         var elements = []
         getElementsByTagName(response, "image", elements)
         for(var i = 0; i < elements.length; i++) {
-            if(elements[i].attributes[0].name === "size" && elements[i].attributes[0].value === imageSize) {
+            if(elements[i].attributes[0].name === "size" && elements[i].attributes[0].value === imageSize && elements[i].childNodes[0]) {
                 var url = elements[i].childNodes[0].nodeValue
                 var extension = getUrlExtension(url)
 
@@ -67,7 +67,7 @@ Item {
 
         xhr.onreadystatechange = (function (response) {
             return function () {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.responseXML) {
                     onLastFmCoverArtResponse(artist, album, imageSize, xhr.responseXML.documentElement, callback, albumid)
                 }
             }
