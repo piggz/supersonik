@@ -73,6 +73,11 @@ Kirigami.ScrollablePage {
                         }
                     }
                 }
+                onHeightChanged: {
+                    if (_displaySearch) {
+                        grdAlbums.positionViewAtBeginning();
+                    }
+                }
             }
         }
         footer: Component {
@@ -88,12 +93,14 @@ Kirigami.ScrollablePage {
         Kirigami.Action {
             icon.name: "search"
             onTriggered: {
-                console.log("search");
+                console.log("search:", _displaySearch, grdAlbums.atYBeginning);
+
                 if (grdAlbums.atYBeginning) {
+                    console.log("at top so toggline search")
                     _displaySearch = !_displaySearch;
-                }
-                if (_displaySearch) {
-                    grdAlbums.positionViewAtBeginning()
+                } else {
+                    _displaySearch = true;
+                    grdAlbums.positionViewAtBeginning();
                 }
             }
         },
