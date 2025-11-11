@@ -44,7 +44,7 @@ Rectangle {
             }
         }
 
-        onDurationChanged: {
+        onDurationChanged: (duration) => {
             sldPosition.to = duration / 1000;
         }
     }
