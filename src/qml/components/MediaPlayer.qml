@@ -318,6 +318,60 @@ Rectangle {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postAddAlbum );
     }
 
+    function playRadioUrl(url) {
+        console.log(url);
+        doRequest(url, "GET", parseRadioPlaylist)
+    }
+
+    function parseRadioPlaylist(xhr) {
+        console.log(xhr.responseType, xhr.responseText);
+        playlist.clear();
+        player.stop();
+
+        var lines = xhr.responseText.split('\n');
+
+        var start = false;
+        var count = 0;
+
+        var lastFile = "";
+        var lastTitle = "";
+        var lastDuration = 0;
+
+        for (const line of lines) {
+            var tline = line.trim();
+            if (tline === '[playlist]') {
+                start = true;
+            }
+            if (start) {
+                if (tline.indexOf("=") > 0) {
+                    var key = tline.split("=")[0];
+                    var value = tline.split("=")[1];
+                    console.log(key, value);
+
+                    if (key === "NumberOfEntries") {
+                        count = value;
+                    }
+                    if (key.startsWith("File")) {
+                        lastFile = value;
+                    }
+                    if (key.startsWith("Title")) {
+                        lastTitle = value;
+                    }
+                    if (key.startsWith("Length")) {
+                        lastDuration = parseInt(value);
+                        console.log("Appending playlist item:", lastTitle, lastFile, lastDuration);
+                        playlist.append({"title": lastTitle, "artist": "",
+                                            "year": "", "duration": lastDuration,
+                                            "songid": 0, "albumid": 0,
+                                            "albumtitle": "", "url": lastFile})
+                    }
+                }
+            }
+        }
+
+        playFile(0);
+    }
+
     function playFile(index) {
         console.log(index);
         player.stop();

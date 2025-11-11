@@ -6,6 +6,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15 as Controls
 import org.kde.kirigami 2.20 as Kirigami
+import "../components/"
 
 import uk.co.piggz 1.0
 
@@ -26,12 +27,45 @@ Kirigami.ScrollablePage {
     property bool _displaySearch: false
     property bool _displayArtist: false
 
+    Component {
+        id: albumComponenet
+        AlbumItem {
+            width: _albumWidth
+        }
+    }
+
+    Component {
+        id: artistDelegate
+
+        ArtistItem {
+            width: _albumWidth
+        }
+    }
+
+    Component {
+        id: radioDelegate
+
+        RadioItem {
+            width: _albumWidth
+            name: radioName
+            homepageUrl: radioHomepageUrl
+            streamUrl: radioStreamUrl
+
+            onOpenStation: (url) => {
+                console.log(url);
+                mediaPlayer.playRadioUrl(url);
+            }
+        }
+    }
+
     GridView {
         id: grdAlbums
         model: {
             console.log(_offlineMode);
             if (_offlineMode) {
                 return offlineFiles.albumModel
+            } else if (listType == "radio") {
+                return radio;
             } else if (_displayArtist) {
                 return artists;
             } else {
@@ -39,7 +73,7 @@ Kirigami.ScrollablePage {
             }
         }
 
-        delegate: _displayArtist ? artistDelegate : albumDelegate
+        delegate: listType === "radio" ? radioDelegate : ( _displayArtist ? artistDelegate : albumComponenet )
         anchors.fill: parent
         anchors.bottomMargin: 50
         cellWidth: _albumWidth + 2;
@@ -134,120 +168,16 @@ Kirigami.ScrollablePage {
         }
     ]
 
-    Component {
-        id: albumDelegate
-
-        Kirigami.Card {
-            id: card
-            width: _albumWidth
-            Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
-            Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
-
-            actions: [
-                Kirigami.Action {
-                    icon.name: "media-playback-start"
-                    onTriggered: {
-                        if (_offlineMode) {
-                            mediaPlayer.replaceAlbumOffline(albumid)
-                        } else {
-                            mediaPlayer.replaceAlbum(albumid)
-                        }
-                    }
-                },
-                Kirigami.Action {
-                    icon.name: "media-playlist-append"
-                    onTriggered: {
-                        if (_offlineMode) {
-                            mediaPlayer.addAlbumOffline(albumid)
-                        } else {
-                            mediaPlayer.addAlbum(albumid)
-                        }
-                    }
-                },
-                Kirigami.Action {
-                    icon.source: starred ? Qt.resolvedUrl("../pics/star-filled.png") : Qt.resolvedUrl("../pics/star-outline.png")
-                    visible: !_offlineMode
-                    onTriggered: {
-                        if (starred) {
-                            unStarAlbum(albumid)
-                            starred = "";
-                        } else {
-                            starAlbum(albumid)
-                            starred =  "true"
-                        }
-                    }
-                },
-                Kirigami.Action {
-                    icon.name: "download"
-                    visible: !_offlineMode
-                    onTriggered: {
-                        offlineFiles.downloadAlbum(albumid);
-                    }
-                }
-
-            ]
-            banner {
-                source: artUrl
-                title: title
-                implicitHeight: width
-                titleAlignment: Qt.AlignLeft | Qt.AlignBottom
-            }
-            contentItem: Controls.Label {
-                wrapMode: Text.NoWrap
-                elide: Text.ElideRight
-                text: artist + " - " + year
-            }
-
-            onHeightChanged: {
-                if (GridView.isCurrentItem) {
-                    setCellHeight(height);
-                }
-            }
-        }
-    }
-
-    Component {
-        id: artistDelegate
-
-        Kirigami.Card {
-            width: _albumWidth
-            Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
-            Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
-
-            actions: [
-                Kirigami.Action {
-                    icon.name: "library-music-symbolic"
-                    onTriggered: {
-                        loadArtistAlbums(artistId)
-                    }
-                }
-            ]
-            banner {
-                source: coverArt ? buildSubsonicUrl("getCoverArt?id=" + coverArt) : Qt.resolvedUrl("../pics/artist.png")
-                onToggled: {
-                    console.log("toggle");
-                }
-            }
-            contentItem: Controls.Label {
-                wrapMode: Text.NoWrap
-                elide: Text.ElideRight
-                text: name
-            }
-
-            onHeightChanged: {
-                if (GridView.isCurrentItem) {
-                    setCellHeight(height);
-                }
-            }
-        }
-    }
-
     ListModel {
         id: albums;
     }
 
     ListModel {
         id: artists;
+    }
+
+    ListModel {
+        id: radio;
     }
 
     Component.onCompleted: {
@@ -287,6 +217,9 @@ Kirigami.ScrollablePage {
         if (listType == "frequent") {
             return i18n("Frequently Played Albums")
         }
+        if (listType == "radio") {
+            return i18n("Internet Radio")
+        }
     }
 
     function switchViewType(viewType) {
@@ -314,7 +247,11 @@ Kirigami.ScrollablePage {
 
     function refresh() {
         console.log("refresh");
-        doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+        if (listType == "radio") {
+            doRequest(buildSubsonicUrl("getInternetRadioStations?size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseRadioStations );
+        } else {
+            doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+        }
     }
 
     function starAlbum(albumId) {
@@ -325,6 +262,39 @@ Kirigami.ScrollablePage {
     function unStarAlbum(albumId) {
         console.log("starAlbum", albumId);
         doRequest(buildSubsonicUrl("unstar?albumId=" + albumId),  "GET", parseUnStar, albumId );
+    }
+
+    function parseRadioStations(xhr) {
+        console.log("Radio:", xhr.response);
+        var res = xhr.responseXML;
+        console.log(xhr.responseType, xhr.responseText);
+
+        if (attributeValue(res.documentElement, "status") === "ok") {
+            console.log("Get radio list Ok");
+            radio.clear();
+
+            var doc = res.documentElement;
+            console.log("xhr length: " + doc.childNodes.length );
+
+            for (var i = 0; i < doc.childNodes.length; ++i) {
+                var stations = doc.childNodes[i];
+                console.log("radio length: " + stations.nodeName, stations.childNodes.length);
+
+                if (stations.nodeName === "internetRadioStations") {
+                    for (var j = 0; j < stations.childNodes.length; ++j) {
+                        var station = stations.childNodes[j];
+                        console.log("radio length: " + station.nodeName, station.childNodes.length);
+                        if (station.nodeName === "internetRadioStation") {
+                            radio.append({"radioId": attributeValue(station, "id"), "radioName": attributeValue(station, "name"),
+                                              "radioStreamUrl": attributeValue(station, "streamUrl"),"radioHomepageUrl": attributeValue(station, "homepageUrl")})
+                        }
+                    }
+                }
+            }
+        } else {
+            console.log("Get radio failed");
+        }
+
     }
 
     function parseAlbumList(xhr) {

@@ -101,6 +101,14 @@ Kirigami.ApplicationWindow {
                 }
             },
             Kirigami.Action {
+                text: i18nc("@action:button", "Radio")
+                icon.name: "audio-radio"
+                enabled: !_offlineMode
+                onTriggered: {
+                    switchList("radio")
+                }
+            },
+            Kirigami.Action {
                 text: i18nc("@action:button", "Settings")
                 icon.name: "configure"
                 onTriggered: {

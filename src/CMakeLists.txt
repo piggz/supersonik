@@ -1,4 +1,7 @@
-add_executable(supersonik)
+add_executable(supersonik
+    qml/components/AlbumItem.qml
+    qml/components/ArtistItem.qml
+    qml/components/RadioItem.qml)
 
 ecm_add_qml_module(supersonik
     URI
@@ -10,8 +13,12 @@ ecm_add_qml_module(supersonik
     qml/components/AlbumArt.qml
     qml/components/MediaPlayer.qml
     qml/components/OfflineFiles.qml
+    qml/components/AlbumItem.qml
+    qml/components/ArtistItem.qml
+    qml/components/RadioItem.qml
     RESOURCES
     qml/pics/cassette.png
+    qml/pics/radio.png
     qml/pics/artist.png
     qml/pics/star-outline.png
     qml/pics/star-filled.png
