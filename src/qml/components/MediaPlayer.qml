@@ -20,6 +20,7 @@ Rectangle {
     property string currentTitle: ""
     property string currentAlbum: ""
     property string currentYear: ""
+    property string currentAlbumArtUrl: ""
 
     property bool canGoNext: currentIndex < (playlist.count - 1)
     property bool canGoPrevious: currentIndex > 0
@@ -387,6 +388,7 @@ Rectangle {
         currentTitle = song.title;
         currentAlbum = song.albumtitle;
         currentYear = song.year;
+        currentAlbumArtUrl = albumArt.getAlbumArtUrl(false, song.albumArtist, currentAlbum, 0, null)
 
         var url = song.url
         console.log(url);
@@ -422,17 +424,21 @@ Rectangle {
                 var album = doc.childNodes[i];
                 console.log("album length: " + album.nodeName, album.childNodes.length);
 
-                for (var j = 0; j < album.childNodes.length; ++j) {
-                    var song = album.childNodes[j];
+                if(album.nodeName == "album") {
+                    var albumArtist = attributeValue(album, "artist")
 
-                    console.log(song.nodeName);
-                    if ( song.nodeName ===  "song") {
-                        playlist.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
-                                            "year": attributeValue(song, "year"), "duration": attributeValue(song, "duration"),
-                                            "songid": attributeValue(song, "id"), "albumid": attributeValue(song, "albumId"),
-                                            "albumtitle": attributeValue(song, "album"), "url": buildSubsonicUrl("stream?id=" + attributeValue(song, "id"))})
+                    for (var j = 0; j < album.childNodes.length; ++j) {
+                        var song = album.childNodes[j];
+
+                        console.log(song.nodeName);
+                        if ( song.nodeName ===  "song") {
+                            playlist.append({"title": attributeValue(song, "title"), "artist": attributeValue(song, "artist"),
+                                                "albumArtist": albumArtist, "year": attributeValue(song, "year"),
+                                                "duration": attributeValue(song, "duration"), "songid": attributeValue(song, "id"),
+                                                "albumid": attributeValue(song, "albumId"), "albumtitle": attributeValue(song, "album"),
+                                                "url": buildSubsonicUrl("stream?id=" + attributeValue(song, "id"))})
+                        }
                     }
-
                 }
             }
 
