@@ -194,7 +194,7 @@ Rectangle {
             clip: true
 
             delegate: Controls.ItemDelegate {
-                width: parent.width
+                width: parent ? parent.width : 0
                 height: 40 + txtTitle.height
 
                 highlighted: index === mediaplayer.currentIndex

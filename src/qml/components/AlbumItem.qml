@@ -5,7 +5,20 @@ import org.kde.kirigami 2.20 as Kirigami
 Kirigami.Card {
     id: card
 
-    width: _albumWidth
+    property bool _offlineMode
+    property string _albumId
+    property bool _starred
+    property string _albumArtist
+    property string _albumTitle
+    property string _albumYear
+    property string _artUrl
+
+    signal replaceAlbum(id: string)
+    signal appendAlbum(id: string)
+    signal starAlbum(id: string)
+    signal unstarAlbum(id: string)
+    signal downloadAlbum(id: string)
+
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
     Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
 
@@ -13,21 +26,13 @@ Kirigami.Card {
         Kirigami.Action {
             icon.name: "media-playback-start"
             onTriggered: {
-                if (_offlineMode) {
-                    mediaPlayer.replaceAlbumOffline(albumid)
-                } else {
-                    mediaPlayer.replaceAlbum(albumid)
-                }
+                replaceAlbum(_albumId);
             }
         },
         Kirigami.Action {
             icon.name: "media-playlist-append"
             onTriggered: {
-                if (_offlineMode) {
-                    mediaPlayer.addAlbumOffline(albumid)
-                } else {
-                    mediaPlayer.addAlbum(albumid)
-                }
+                appendAlbum(_albumId);
             }
         },
         Kirigami.Action {
@@ -35,10 +40,10 @@ Kirigami.Card {
             visible: !_offlineMode
             onTriggered: {
                 if (starred) {
-                    unStarAlbum(albumid)
+                    unStarAlbum(_albumid)
                     starred = "";
                 } else {
-                    starAlbum(albumid)
+                    starAlbum(_albumid)
                     starred =  "true"
                 }
             }
@@ -47,21 +52,21 @@ Kirigami.Card {
             icon.name: "download"
             visible: !_offlineMode
             onTriggered: {
-                offlineFiles.downloadAlbum(albumid);
+                downloadAlbum(_albumId);
             }
         }
 
     ]
     banner {
-        source: artUrl
-        title: title
+        source: _artUrl
+        title: _albumTitle
         implicitHeight: width
         titleAlignment: Qt.AlignLeft | Qt.AlignBottom
     }
     contentItem: Controls.Label {
         wrapMode: Text.NoWrap
         elide: Text.ElideRight
-        text: artist + " - " + year
+        text: _albumArtist + " - " + _albumYear
     }
 
     onHeightChanged: {

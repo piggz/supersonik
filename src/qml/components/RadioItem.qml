@@ -3,11 +3,10 @@ import QtQuick.Controls 2.15 as Controls
 import org.kde.kirigami 2.20 as Kirigami
 
 Kirigami.Card {
-    width: _albumWidth
 
-    property string streamUrl
-    property string homepageUrl
-    property string name
+    property string _streamUrl
+    property string _homepageUrl
+    property string _stationName
 
     signal openStation(url: string)
 
@@ -18,13 +17,13 @@ Kirigami.Card {
         Kirigami.Action {
             icon.name: "media-playback-start"
             onTriggered: {
-               openStation(streamUrl)
+               openStation(_streamUrl)
             }
         },
         Kirigami.Action {
             icon.name: "go-home"
             onTriggered: {
-                Qt.openUrlExternally(homepageUrl)
+                Qt.openUrlExternally(_homepageUrl)
             }
         }
     ]
@@ -34,7 +33,7 @@ Kirigami.Card {
     contentItem: Controls.Label {
         wrapMode: Text.NoWrap
         elide: Text.ElideRight
-        text: name
+        text: _stationName
     }
 
     onHeightChanged: {

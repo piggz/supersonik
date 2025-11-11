@@ -31,6 +31,41 @@ Kirigami.ScrollablePage {
         id: albumComponenet
         AlbumItem {
             width: _albumWidth
+
+            _albumId: albumId
+            _albumTitle: title
+            _starred: starred
+            _albumArtist: artist
+            _albumYear: year
+            _artUrl: artUrl
+
+            onReplaceAlbum: (id) => {
+                if (_offlineMode) {
+                    mediaPlayer.replaceAlbumOffline(id)
+                } else {
+                    mediaPlayer.replaceAlbum(id)
+                }
+            }
+
+            onAppendAlbum: (id) => {
+               if (_offlineMode) {
+                   mediaPlayer.addAlbumOffline(id)
+               } else {
+                   mediaPlayer.addAlbum(id)
+               }
+            }
+
+            onStarAlbum: (id) => {
+                starAlbum(id);
+            }
+
+            onUnstarAlbum: (id) => {
+                unStarAlbum(id);
+            }
+
+            onDownloadAlbum: (id) => {
+                offlineFiles.downloadAlbum(id);
+            }
         }
     }
 
@@ -39,6 +74,14 @@ Kirigami.ScrollablePage {
 
         ArtistItem {
             width: _albumWidth
+            _artistId: artistId
+            _artistName: name
+            _coverArt: coverArt
+
+            onOpenArtist: (artistId) => {
+                console.log(artistId);
+                loadArtistAlbums(artistId)
+            }
         }
     }
 
@@ -47,9 +90,9 @@ Kirigami.ScrollablePage {
 
         RadioItem {
             width: _albumWidth
-            name: radioName
-            homepageUrl: radioHomepageUrl
-            streamUrl: radioStreamUrl
+            _stationName: radioName
+            _homepageUrl: radioHomepageUrl
+            _streamUrl: radioStreamUrl
 
             onOpenStation: (url) => {
                 console.log(url);
@@ -328,7 +371,7 @@ Kirigami.ScrollablePage {
                         var artist = attributeValue(song, "artist")
                         var albumid = attributeValue(song, "id")
                         albums.append({"title": title, "artist": artist,
-                                          "year": attributeValue(song, "year"),"albumid": albumid,
+                                          "year": attributeValue(song, "year"),"albumId": albumid,
                                           "coverArt": attributeValue(song, "coverArt"), "starred": attributeValue(song, "starred"),
                                           "artUrl": albumArt.getAlbumArtUrl(coverArt, artist, title, albumid, updateAlbumArt)})
                     }
