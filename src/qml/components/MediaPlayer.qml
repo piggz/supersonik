@@ -43,6 +43,10 @@ Rectangle {
                 nextTrack();
             }
         }
+
+        onDurationChanged: {
+            sldPosition.to = duration / 1000;
+        }
     }
 
     ColumnLayout {
@@ -64,13 +68,47 @@ Rectangle {
             elide: "ElideRight"
         }
 
-        Controls.Label {
-            id: lblArtist
-            text: currentArtist + " - " + currentAlbum + " - " + currentYear
-            color: "white"
-            Layout.alignment: Qt.AlignVCenter
-            Layout.maximumWidth: root.width - 20
-            elide: "ElideRight"
+        RowLayout {
+            Layout.fillWidth: true
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 2
+
+                Controls.Label {
+                    id: lblArtist
+                    text: currentArtist
+                    color: "white"
+                    font.pointSize: 10
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                }
+
+                Controls.Label {
+                    id: lblAlbum
+                    text: currentAlbum + (currentYear ? " (" + currentYear + ")" : "")
+                    color: "#cccccc"
+                    font.pointSize: 9
+                    elide: Text.ElideRight
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                }
+            }
+
+            Item { Layout.fillWidth: false; Layout.preferredWidth: 10 }
+
+            Controls.Label {
+                id: lblTime
+                text: "%1 / %2".arg(formatTime(player.position / 1000)).arg(formatTime(player.duration / 1000))
+                color: "white"
+                font.bold: true
+                horizontalAlignment: Text.AlignRight
+                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                Layout.preferredWidth: parent.width * 0.3
+            }
         }
 
         Controls.Slider {
@@ -78,7 +116,13 @@ Rectangle {
             Layout.fillWidth: true
             enabled: false
             Layout.alignment: Qt.AlignVCenter
+            from: 0
+            to: 0
             //Layout.preferredHeight: minHeight / 3
+
+            onMoved: {
+                player.position = value * 1000;
+            }
         }
 
         //Controls
@@ -269,7 +313,7 @@ Rectangle {
     function replaceAlbum(albumId) {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postReplaceAlbum );
     }
-    
+
     function addAlbum(albumId) {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", postAddAlbum );
     }
@@ -342,5 +386,13 @@ Rectangle {
         } else {
             console.log("Get album failed");
         }
+    }
+
+    function formatTime(seconds) {
+        if (isNaN(seconds) || seconds < 0)
+            return "0:00";
+        var m = Math.floor(seconds / 60);
+        var s = Math.floor(seconds % 60);
+        return m + ":" + (s < 10 ? "0" + s : s);
     }
 }
