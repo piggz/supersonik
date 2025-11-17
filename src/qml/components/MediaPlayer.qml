@@ -279,6 +279,7 @@ Rectangle {
     }
 
     function replaceAlbumOffline(albumId) {
+        console.log("replaceAlbumOffline:", albumId);
         playlist.clear();
         var songs = offlineFiles.songs(albumId);
 

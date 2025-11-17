@@ -5,7 +5,7 @@ import org.kde.kirigami 2.20 as Kirigami
 Kirigami.Card {
     id: card
 
-    property bool _offlineMode
+    property bool _offline
     property string _albumId
     property bool _starred
     property string _albumArtist
@@ -13,8 +13,8 @@ Kirigami.Card {
     property string _albumYear
     property string _artUrl
 
-    signal replaceAlbum(id: string)
-    signal appendAlbum(id: string)
+    signal replaceAlbum(id: string, offlineMode: bool)
+    signal appendAlbum(id: string, offlineMode: bool)
     signal starAlbum(id: string)
     signal unstarAlbum(id: string)
     signal downloadAlbum(id: string)
@@ -26,18 +26,18 @@ Kirigami.Card {
         Kirigami.Action {
             icon.name: "media-playback-start"
             onTriggered: {
-                replaceAlbum(_albumId);
+                replaceAlbum(_albumId, _offline);
             }
         },
         Kirigami.Action {
             icon.name: "media-playlist-append"
             onTriggered: {
-                appendAlbum(_albumId);
+                appendAlbum(_albumId, _offline);
             }
         },
         Kirigami.Action {
             icon.source: starred ? Qt.resolvedUrl("../pics/star-filled.png") : Qt.resolvedUrl("../pics/star-outline.png")
-            visible: !_offlineMode
+            visible: !_offline
             onTriggered: {
                 if (starred) {
                     unStarAlbum(_albumid)
@@ -50,7 +50,7 @@ Kirigami.Card {
         },
         Kirigami.Action {
             icon.name: "download"
-            visible: !_offlineMode
+            visible: !_offline
             onTriggered: {
                 downloadAlbum(_albumId);
             }

@@ -38,9 +38,11 @@ Kirigami.ScrollablePage {
             _albumArtist: artist
             _albumYear: year
             _artUrl: artUrl
+            _offline: _offlineMode
 
-            onReplaceAlbum: (id) => {
-                if (_offlineMode) {
+            onReplaceAlbum: (id, offlineMode) => {
+                console.log(offlineMode);
+                if (offlineMode) {
                     mediaPlayer.replaceAlbumOffline(id)
                 } else {
                     mediaPlayer.replaceAlbum(id)
@@ -48,7 +50,7 @@ Kirigami.ScrollablePage {
             }
 
             onAppendAlbum: (id) => {
-               if (_offlineMode) {
+               if (offlineMode) {
                    mediaPlayer.addAlbumOffline(id)
                } else {
                    mediaPlayer.addAlbum(id)
