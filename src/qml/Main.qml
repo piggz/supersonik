@@ -31,7 +31,7 @@ Kirigami.ApplicationWindow {
     property bool _offlineMode: false
     property bool _largeDisplay: false
 
-    property int _baseColumns: _largeDisplay ? 4 : 2
+    property int _baseColumns: _largeDisplay ? 3 : 2
 
     pageStack {
         defaultColumnWidth: Kirigami.Units.gridUnit * 20
