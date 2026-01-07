@@ -172,8 +172,12 @@ Kirigami.ScrollablePage {
                 height: mpHeight
             }
         }
+        Controls.BusyIndicator {
+            id: indicator
+            anchors.centerIn: parent
+            visible: _busy
+        }
     }
-
 
     actions: [
         Kirigami.Action {

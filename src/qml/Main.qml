@@ -30,6 +30,7 @@ Kirigami.ApplicationWindow {
     property string _messageText: ""
     property bool _offlineMode: false
     property bool _largeDisplay: false
+    property bool _busy: false
 
     property int _baseColumns: _largeDisplay ? 3 : 2
 
@@ -254,12 +255,16 @@ Kirigami.ApplicationWindow {
     function doRequest(url, method, callback, param, responseType) {
         console.log("doRequest:", url, method, param, responseType);
 
+        _busy = true;
+
         var xhr = new XMLHttpRequest()
         xhr.param = param;
         xhr.onreadystatechange = (function (response) {
             return function () {
-                if (xhr.readyState === XMLHttpRequest.DONE)
+                if (xhr.readyState === XMLHttpRequest.DONE) {
                     callback(response);
+                    _busy = false;
+                }
             }
         })(xhr)
         xhr.open(method, url, true)
