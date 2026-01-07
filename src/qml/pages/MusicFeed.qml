@@ -58,11 +58,11 @@ Kirigami.ScrollablePage {
             }
 
             onStarAlbum: (id) => {
-                starAlbum(id);
+                musicpage.starAlbum(id);
             }
 
             onUnstarAlbum: (id) => {
-                unStarAlbum(id);
+                musicpage.unStarAlbum(id);
             }
 
             onDownloadAlbum: (id) => {

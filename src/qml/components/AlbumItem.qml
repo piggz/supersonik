@@ -40,10 +40,10 @@ Kirigami.Card {
             visible: !_offline
             onTriggered: {
                 if (starred) {
-                    unStarAlbum(_albumid)
+                    unstarAlbum(_albumId)
                     starred = "";
                 } else {
-                    starAlbum(_albumid)
+                    starAlbum(_albumId)
                     starred =  "true"
                 }
             }
