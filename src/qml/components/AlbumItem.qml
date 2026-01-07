@@ -25,12 +25,14 @@ Kirigami.Card {
     actions: [
         Kirigami.Action {
             icon.name: "media-playback-start"
+            text: qsTr("Play")
             onTriggered: {
                 replaceAlbum(_albumId, _offline);
             }
         },
         Kirigami.Action {
             icon.name: "media-playlist-append"
+            text: qsTr("Append")
             onTriggered: {
                 appendAlbum(_albumId, _offline);
             }
@@ -38,6 +40,7 @@ Kirigami.Card {
         Kirigami.Action {
             icon.source: starred ? Qt.resolvedUrl("../pics/star-filled.png") : Qt.resolvedUrl("../pics/star-outline.png")
             visible: !_offline
+            text: qsTr("Favourite")
             onTriggered: {
                 if (starred) {
                     unstarAlbum(_albumId)
@@ -50,6 +53,7 @@ Kirigami.Card {
         },
         Kirigami.Action {
             icon.name: "download"
+            text: qsTr("Download")
             visible: !_offline
             onTriggered: {
                 downloadAlbum(_albumId);
