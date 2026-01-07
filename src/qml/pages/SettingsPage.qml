@@ -32,6 +32,18 @@ Kirigami.ScrollablePage {
                 title: i18n("Supersonic Settings")
             }
 
+            FormCard.FormDelegateSeparator {}
+
+            FormCard.FormCheckDelegate {
+                            id:chkLargeDisplay
+                            text: i18n("Large Display")
+                            onToggled: {
+                                _largeDisplay = checkState
+
+                                saveSettings();
+                            }
+                        }
+
             FormCard.FormTextFieldDelegate {
                 id: txtServerURL
                 label: i18n("Subsonic Server Url:")
@@ -127,6 +139,7 @@ Kirigami.ScrollablePage {
         _username = Helper.getSetting("username", "");
         _password = Helper.getSetting("password", "");
         _legacyAuth = Helper.getSetting("legacyAuth", false);
+        _largeDisplay = Helper.getSetting("largeDisplay", false);
 
         console.log(_serverURL, _username, _password, _legacyAuth);
 
@@ -145,6 +158,11 @@ Kirigami.ScrollablePage {
         if (_legacyAuth) {
             chkLegacyAuth.checkState = Qt.Checked;
         }
+
+        if (_largeDisplay) {
+            chkLargeDisplay.checkState = Qt.Checked;
+        }
+
     }
 
     function saveSettings() {
@@ -153,6 +171,7 @@ Kirigami.ScrollablePage {
         Helper.setSetting("username", _username);
         Helper.setSetting("password", _password);
         Helper.setSetting("legacyAuth", _legacyAuth);
+        Helper.setSetting("largeDisplay", _largeDisplay);
 
         console.log(_serverURL, _username, _password, _legacyAuth);
     }

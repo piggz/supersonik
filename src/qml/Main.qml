@@ -29,6 +29,9 @@ Kirigami.ApplicationWindow {
     property bool _displayMessage: false
     property string _messageText: ""
     property bool _offlineMode: false
+    property bool _largeDisplay: false
+
+    property int _baseColumns: _largeDisplay ? 4 : 2
 
     pageStack {
         defaultColumnWidth: Kirigami.Units.gridUnit * 20
@@ -227,6 +230,7 @@ Kirigami.ApplicationWindow {
         _username = Helper.getSetting("username", "");
         _password = Helper.getSetting("password", "");
         _legacyAuth = Helper.getSetting("legacyAuth", false);
+        _largeDisplay = Helper.getSetting("largeDisplay", false);
 
         _offlineMode = Helper.getSetting("offlineMode", false);
 
