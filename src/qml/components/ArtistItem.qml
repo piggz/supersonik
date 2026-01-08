@@ -16,6 +16,8 @@ Kirigami.Card {
     actions: [
         Kirigami.Action {
             icon.name: "library-music-symbolic"
+            text: qsTr("Open Artist")
+            displayHint: Kirigami.DisplayHint.IconOnly
             onTriggered: {
                 openArtist(_artistId);
             }

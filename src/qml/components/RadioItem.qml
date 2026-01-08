@@ -16,6 +16,8 @@ Kirigami.Card {
     actions: [
         Kirigami.Action {
             icon.name: "media-playback-start"
+            text: qsTr("Play")
+            displayHint: Kirigami.DisplayHint.IconOnly
             onTriggered: {
                openStation(_streamUrl)
             }
