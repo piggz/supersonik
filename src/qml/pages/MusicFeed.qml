@@ -16,7 +16,7 @@ Kirigami.ScrollablePage {
 
     property string uid: "musicpage"
     property int _columns: musicpage.width > musicpage.height ? _baseColumns * 2 : _baseColumns
-    property int _albumWidth: ((musicpage.width - _columns * 2)) / _columns
+    property int _albumWidth: (((musicpage.width - _columns * 2)) / _columns) - 16
     property int _albumHeight: 0
     property int itemsPerPage: 100
     property int totalItems: 0
@@ -41,33 +41,33 @@ Kirigami.ScrollablePage {
             _offline: _offlineMode
 
             onReplaceAlbum: (id, offlineMode) => {
-                console.log(offlineMode);
-                if (offlineMode) {
-                    mediaPlayer.replaceAlbumOffline(id)
-                } else {
-                    mediaPlayer.replaceAlbum(id)
-                }
-            }
+                                console.log(offlineMode);
+                                if (offlineMode) {
+                                    mediaPlayer.replaceAlbumOffline(id)
+                                } else {
+                                    mediaPlayer.replaceAlbum(id)
+                                }
+                            }
 
             onAppendAlbum: (id) => {
-               if (offlineMode) {
-                   mediaPlayer.addAlbumOffline(id)
-               } else {
-                   mediaPlayer.addAlbum(id)
-               }
-            }
+                               if (offlineMode) {
+                                   mediaPlayer.addAlbumOffline(id)
+                               } else {
+                                   mediaPlayer.addAlbum(id)
+                               }
+                           }
 
             onStarAlbum: (id) => {
-                musicpage.starAlbum(id);
-            }
+                             musicpage.starAlbum(id);
+                         }
 
             onUnstarAlbum: (id) => {
-                musicpage.unStarAlbum(id);
-            }
+                               musicpage.unStarAlbum(id);
+                           }
 
             onDownloadAlbum: (id) => {
-                offlineFiles.downloadAlbum(id);
-            }
+                                 offlineFiles.downloadAlbum(id);
+                             }
         }
     }
 
@@ -81,9 +81,9 @@ Kirigami.ScrollablePage {
             _coverArt: coverArt
 
             onOpenArtist: (artistId) => {
-                console.log(artistId);
-                loadArtistAlbums(artistId)
-            }
+                              console.log(artistId);
+                              loadArtistAlbums(artistId)
+                          }
         }
     }
 
@@ -97,85 +97,109 @@ Kirigami.ScrollablePage {
             _streamUrl: radioStreamUrl
 
             onOpenStation: (url) => {
-                console.log(url);
-                mediaPlayer.playRadioUrl(url);
-            }
+                               console.log(url);
+                               mediaPlayer.playRadioUrl(url);
+                           }
         }
     }
 
-    GridView {
-        id: grdAlbums
-        model: {
-            console.log(_offlineMode);
-            if (_offlineMode) {
-                return offlineFiles.albumModel
-            } else if (listType == "radio") {
-                return radio;
-            } else if (_displayArtist) {
-                return artists;
-            } else {
-                return albums;
-            }
-        }
+    Component {
+        id: genreDelegate
 
-        delegate: listType === "radio" ? radioDelegate : ( _displayArtist ? artistDelegate : albumComponenet )
+        GenreItem {
+            width: _albumWidth
+            _genreName: genreName
+            _songCount: genreSongCount
+            _albumCount: genreAlbumCount
+
+            onOpenGenre: (genre) => {
+                               console.log(genre);
+                           }
+        }
+    }
+
+    ColumnLayout {
         anchors.fill: parent
-        anchors.bottomMargin: 50
-        cellWidth: _albumWidth + 2;
-        cellHeight: _albumHeight + 2;
+        Kirigami.InlineMessage {
+            id: messageLine
+            Layout.fillWidth: true
+            type: Kirigami.MessageType.Error
+            visible: false
+        }
 
-        header: Component {
-            Item {
-                height: _displaySearch ? txtSearch.height + 20: 0
-                width: parent.width - 20
+        Timer {
+            id: tmrHideMessage
+            running: false
+            repeat: false
+            interval: 5000
+            onTriggered: {
+                messageLine.visible = false;
+            }
+        }
+        GridView {
+            id: grdAlbums
+            model: getModel()
+            delegate: getDelegate()
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.bottomMargin: 50
+            cellWidth: _albumWidth + 2;
+            cellHeight: _albumHeight + 2;
 
-                RowLayout {
-                    spacing: 10
-                    anchors.fill: parent
-                    anchors.margins: 10
-                    visible: _displaySearch
+            header: Component {
+                Item {
+                    height: _displaySearch ? txtSearch.height + 20: 0
+                    width: parent.width - 20
 
-                    Controls.TextField {
-                        id: txtSearch
-                        Layout.fillWidth: true
-                        placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
-                        Keys.onReturnPressed: {
-                            if (listType === "alphabeticalByArtist") {
-                                searchArtists(txtSearch.text);
-                            } else {
-                                searchAlbums(txtSearch.text);
+                    RowLayout {
+                        spacing: 10
+                        anchors.fill: parent
+                        anchors.margins: 10
+                        visible: _displaySearch
+
+                        Controls.TextField {
+                            id: txtSearch
+                            Layout.fillWidth: true
+                            placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
+                            Keys.onReturnPressed: {
+                                if (listType === "alphabeticalByArtist") {
+                                    searchArtists(txtSearch.text);
+                                } else {
+                                    searchAlbums(txtSearch.text);
+                                }
+                            }
+                        }
+                        Controls.ToolButton {
+                            id: btnSearch
+                            icon.name: "search"
+                            onClicked: {
+                                if (listType === "alphabeticalByArtist") {
+                                    searchArtists(txtSearch.text);
+                                } else {
+                                    searchAlbums(txtSearch.text);
+                                }
                             }
                         }
                     }
-                    Controls.ToolButton {
-                        id: btnSearch
-                        icon.name: "search"
-                        onClicked: {
-                            if (listType === "alphabeticalByArtist") {
-                                searchArtists(txtSearch.text);
-                            } else {
-                                searchAlbums(txtSearch.text);
-                            }
+                    onHeightChanged: {
+                        if (_displaySearch) {
+                            grdAlbums.positionViewAtBeginning();
                         }
                     }
-                }
-                onHeightChanged: {
-                    if (_displaySearch) {
-                        grdAlbums.positionViewAtBeginning();
-                    }
+
                 }
             }
-        }
-        footer: Component {
-            Item {
-                width: parent.width
-                height: mpHeight
+            footer: Component {
+                Item {
+                    width: parent.width
+                    height: mpHeight
+                }
             }
-        }
-        Controls.BusyIndicator {
-            id: indicator
-            anchors.centerIn: parent
-            visible: _busy
+            Controls.BusyIndicator {
+                id: indicator
+                anchors.centerIn: parent
+                visible: _busy
+            }
         }
     }
 
@@ -229,6 +253,10 @@ Kirigami.ScrollablePage {
         id: radio;
     }
 
+    ListModel {
+        id: genres
+    }
+
     Component.onCompleted: {
         refresh();
     }
@@ -271,6 +299,35 @@ Kirigami.ScrollablePage {
         }
     }
 
+    function getModel() {
+        console.log(_offlineMode);
+        if (_offlineMode) {
+            return offlineFiles.albumModel
+        } else if (listType == "radio") {
+            return radio;
+        } else if (listType === "genre") {
+            return genres;
+        } else if (_displayArtist) {
+            return artists;
+        } else {
+            return albums;
+        }
+    }
+
+    function getDelegate() {
+        if (listType === "radio") {
+            return radioDelegate;
+        } else if (listType === "genre") {
+            return genreDelegate;
+        } else {
+                if (_displayArtist) {
+                    return artistDelegate
+                }
+        }
+
+        return albumComponenet;
+    }
+
     function switchViewType(viewType) {
         if (viewType !== listType) {
             currentPage = 1;
@@ -298,6 +355,8 @@ Kirigami.ScrollablePage {
         console.log("refresh");
         if (listType == "radio") {
             doRequest(buildSubsonicUrl("getInternetRadioStations?size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseRadioStations );
+        } else if (listType == "genre") {
+            doRequest(buildSubsonicUrl("getGenres"), "GET", parseGenres );
         } else {
             doRequest(buildSubsonicUrl("getAlbumList2?type=" + listType + "&size=" + itemsPerPage + "&offset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
         }
@@ -335,15 +394,50 @@ Kirigami.ScrollablePage {
                         console.log("radio length: " + station.nodeName, station.childNodes.length);
                         if (station.nodeName === "internetRadioStation") {
                             radio.append({"radioId": attributeValue(station, "id"), "radioName": attributeValue(station, "name"),
-                                              "radioStreamUrl": attributeValue(station, "streamUrl"),"radioHomepageUrl": attributeValue(station, "homepageUrl")})
+                                             "radioStreamUrl": attributeValue(station, "streamUrl"),"radioHomepageUrl": attributeValue(station, "homepageUrl")})
                         }
                     }
                 }
             }
         } else {
             console.log("Get radio failed");
+            error(attributeValue(res.documentElement.childNodes[1], "message"));
         }
+    }
 
+    function parseGenres(xhr) {
+        console.log("Genres:", xhr.response);
+        var res = xhr.responseXML;
+        console.log(xhr.responseType, xhr.responseText);
+
+        if (attributeValue(res.documentElement, "status") === "ok") {
+            console.log("Get genre list Ok");
+            genres.clear();
+
+            var doc = res.documentElement;
+            console.log("xhr length: " + doc.childNodes.length );
+
+            for (var i = 0; i < doc.childNodes.length; ++i) {
+                var gn = doc.childNodes[i];
+                console.log("genre length: " + gn.nodeName, gn.childNodes.length);
+
+                if (gn.nodeName === "genres") {
+                    console.log("Found genres");
+                    for (var j = 0; j < gn.childNodes.length; ++j) {
+                        var genre = gn.childNodes[j];
+                        if (genre.nodeName === "genre") {
+                            genres.append({"genreName": genre.childNodes[0].nodeValue, "genreSongCount": attributeValue(genre, "songCount"),
+                                              "genreAlbumCount": attributeValue(genre, "albumCount")})
+                            console.log(genre.childNodes[0].nodeValue);
+                        }
+
+                    }
+                }
+            }
+        } else {
+            console.log("Get radio failed");
+            error(attributeValue(res.documentElement.childNodes[1], "message"));
+        }
     }
 
     function parseAlbumList(xhr) {
@@ -386,6 +480,7 @@ Kirigami.ScrollablePage {
             }
         } else {
             console.log("Get album failed");
+            error(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -419,7 +514,8 @@ Kirigami.ScrollablePage {
                 }
             }
         } else {
-            console.log("Get album failed");
+            console.log("Get artist failed");
+            error(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -476,5 +572,11 @@ Kirigami.ScrollablePage {
                 albums.setProperty(i, "artUrl", newArtUrl);
             }
         }
+    }
+
+    function error(msg) {
+        messageLine.text = msg;
+        messageLine.visible = true;
+        tmrHideMessage.start();
     }
 }

@@ -105,6 +105,14 @@ Kirigami.ApplicationWindow {
                 }
             },
             Kirigami.Action {
+                text: i18nc("@action:button", "Genres")
+                icon.name: "favorite-genres-amarok"
+                enabled: !_offlineMode
+                onTriggered: {
+                    switchList("genre")
+                }
+            },
+            Kirigami.Action {
                 text: i18nc("@action:button", "Radio")
                 icon.name: "audio-radio"
                 enabled: !_offlineMode
@@ -291,6 +299,10 @@ Kirigami.ApplicationWindow {
     }
 
     function attributeValue(node, attribute) {
+        if (!node) {
+            return "";
+        }
+
         for (var i = 0; i < node.attributes.length; ++i) {
             if (node.attributes[i].name === attribute) {
                 return node.attributes[i].value;
