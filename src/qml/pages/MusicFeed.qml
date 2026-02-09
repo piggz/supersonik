@@ -16,14 +16,14 @@ Kirigami.ScrollablePage {
 
     property string uid: "musicpage"
     property int _columns: musicpage.width > musicpage.height ? _baseColumns * 2 : _baseColumns
-    property int _albumWidth: (((musicpage.width - _columns * 2)) / _columns) - 16
+    property int _albumWidth: (((musicpage.width - _columns * 2)) / _columns) - 8
     property int _albumHeight: 0
     property int itemsPerPage: 100
     property int totalItems: 0
     property int currentPage: 1
     property string listType: "alphabeticalByName"
     property bool _canPageBackward: currentPage > 1
-    property bool _canPageForward: albums.count == itemsPerPage
+    property bool _canPageForward: albums.count === itemsPerPage
     property bool _displaySearch: false
     property bool _displayArtist: false
 
@@ -113,93 +113,74 @@ Kirigami.ScrollablePage {
             _albumCount: genreAlbumCount
 
             onOpenGenre: (genre) => {
-                               console.log(genre);
-                           }
+                             console.log(genre);
+                             loadGenreAlbums(genre)
+                         }
         }
     }
 
-    ColumnLayout {
+    GridView {
+        id: grdAlbums
+        model: getModel()
+        delegate: getDelegate()
         anchors.fill: parent
-        Kirigami.InlineMessage {
-            id: messageLine
-            Layout.fillWidth: true
-            type: Kirigami.MessageType.Error
-            visible: false
-        }
+        Layout.bottomMargin: 50
+        cellWidth: _albumWidth + 8;
+        cellHeight: _albumHeight + 8;
 
-        Timer {
-            id: tmrHideMessage
-            running: false
-            repeat: false
-            interval: 5000
-            onTriggered: {
-                messageLine.visible = false;
-            }
-        }
-        GridView {
-            id: grdAlbums
-            model: getModel()
-            delegate: getDelegate()
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            Layout.bottomMargin: 50
-            cellWidth: _albumWidth + 2;
-            cellHeight: _albumHeight + 2;
+        header: Component {
+            Item {
+                height: _displaySearch ? txtSearch.height + 20: 0
+                width: parent.width - 20
 
-            header: Component {
-                Item {
-                    height: _displaySearch ? txtSearch.height + 20: 0
-                    width: parent.width - 20
+                RowLayout {
+                    spacing: 10
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    visible: _displaySearch
 
-                    RowLayout {
-                        spacing: 10
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        visible: _displaySearch
-
-                        Controls.TextField {
-                            id: txtSearch
-                            Layout.fillWidth: true
-                            placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
-                            Keys.onReturnPressed: {
-                                if (listType === "alphabeticalByArtist") {
-                                    searchArtists(txtSearch.text);
-                                } else {
-                                    searchAlbums(txtSearch.text);
-                                }
-                            }
-                        }
-                        Controls.ToolButton {
-                            id: btnSearch
-                            icon.name: "search"
-                            onClicked: {
-                                if (listType === "alphabeticalByArtist") {
-                                    searchArtists(txtSearch.text);
-                                } else {
-                                    searchAlbums(txtSearch.text);
-                                }
+                    Controls.TextField {
+                        id: txtSearch
+                        Layout.fillWidth: true
+                        placeholderText: listType === "alphabeticalByArtist" ? "Artist Search..." : "Album Search..."
+                        Keys.onReturnPressed: {
+                            if (listType === "alphabeticalByArtist") {
+                                searchArtists(txtSearch.text);
+                            } else {
+                                searchAlbums(txtSearch.text);
                             }
                         }
                     }
-                    onHeightChanged: {
-                        if (_displaySearch) {
-                            grdAlbums.positionViewAtBeginning();
+                    Controls.ToolButton {
+                        id: btnSearch
+                        icon.name: "search"
+                        onClicked: {
+                            if (listType === "alphabeticalByArtist") {
+                                searchArtists(txtSearch.text);
+                            } else {
+                                searchAlbums(txtSearch.text);
+                            }
                         }
                     }
+                }
+                onHeightChanged: {
+                    if (_displaySearch) {
+                        grdAlbums.positionViewAtBeginning();
+                    }
+                }
 
-                }
             }
-            footer: Component {
-                Item {
-                    width: parent.width
-                    height: mpHeight
-                }
+        }
+        footer: Component {
+            Item {
+                width: parent.width
+                height: mpHeight
             }
-            Controls.BusyIndicator {
-                id: indicator
-                anchors.centerIn: parent
-                visible: _busy
-            }
+        }
+        Controls.BusyIndicator {
+            id: indicator
+            anchors.centerIn: parent
+            visible: _busy
         }
     }
 
@@ -297,10 +278,15 @@ Kirigami.ScrollablePage {
         if (listType == "radio") {
             return i18n("Internet Radio")
         }
+        if (listType == "genre") {
+            return i18n("Music Genres")
+        }
+        if (listType == "albumSearch") {
+            return i18n("Album Results")
+        }
     }
 
     function getModel() {
-        console.log(_offlineMode);
         if (_offlineMode) {
             return offlineFiles.albumModel
         } else if (listType == "radio") {
@@ -309,9 +295,9 @@ Kirigami.ScrollablePage {
             return genres;
         } else if (_displayArtist) {
             return artists;
-        } else {
-            return albums;
         }
+
+        return albums;
     }
 
     function getDelegate() {
@@ -320,9 +306,9 @@ Kirigami.ScrollablePage {
         } else if (listType === "genre") {
             return genreDelegate;
         } else {
-                if (_displayArtist) {
-                    return artistDelegate
-                }
+            if (_displayArtist) {
+                return artistDelegate
+            }
         }
 
         return albumComponenet;
@@ -349,6 +335,11 @@ Kirigami.ScrollablePage {
     function loadArtistAlbums(artistId) {
         console.log("loadArtistAlbums");
         doRequest(buildSubsonicUrl("getArtist?id=" + artistId), "GET", parseAlbumList );
+    }
+
+    function loadGenreAlbums(genre) {
+        console.log("loadGenreAlbums");
+        doRequest(buildSubsonicUrl("getAlbumList2?type=byGenre&genre=" + genre), "GET", parseAlbumList );
     }
 
     function refresh() {
@@ -401,7 +392,7 @@ Kirigami.ScrollablePage {
             }
         } else {
             console.log("Get radio failed");
-            error(attributeValue(res.documentElement.childNodes[1], "message"));
+            showError(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -425,7 +416,7 @@ Kirigami.ScrollablePage {
                     console.log("Found genres");
                     for (var j = 0; j < gn.childNodes.length; ++j) {
                         var genre = gn.childNodes[j];
-                        if (genre.nodeName === "genre") {
+                        if (genre.nodeName === "genre" && attributeValue(genre, "albumCount") > 0) {
                             genres.append({"genreName": genre.childNodes[0].nodeValue, "genreSongCount": attributeValue(genre, "songCount"),
                                               "genreAlbumCount": attributeValue(genre, "albumCount")})
                             console.log(genre.childNodes[0].nodeValue);
@@ -436,7 +427,7 @@ Kirigami.ScrollablePage {
             }
         } else {
             console.log("Get radio failed");
-            error(attributeValue(res.documentElement.childNodes[1], "message"));
+            showError(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -445,6 +436,9 @@ Kirigami.ScrollablePage {
         var res = xhr.responseXML;
         console.log(xhr.responseType, xhr.responseText);
         _displayArtist = false;
+        if (listType == "genre") {
+            listType = "albumSearch";
+        }
 
         if (attributeValue(res.documentElement, "status") === "ok") {
             console.log("Get album list Ok");
@@ -480,7 +474,7 @@ Kirigami.ScrollablePage {
             }
         } else {
             console.log("Get album failed");
-            error(attributeValue(res.documentElement.childNodes[1], "message"));
+            showError(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -515,7 +509,7 @@ Kirigami.ScrollablePage {
             }
         } else {
             console.log("Get artist failed");
-            error(attributeValue(res.documentElement.childNodes[1], "message"));
+            showError(attributeValue(res.documentElement.childNodes[1], "message"));
         }
     }
 
@@ -572,11 +566,5 @@ Kirigami.ScrollablePage {
                 albums.setProperty(i, "artUrl", newArtUrl);
             }
         }
-    }
-
-    function error(msg) {
-        messageLine.text = msg;
-        messageLine.visible = true;
-        tmrHideMessage.start();
     }
 }
