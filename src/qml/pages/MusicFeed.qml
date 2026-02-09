@@ -324,12 +324,12 @@ Kirigami.ScrollablePage {
 
     function searchArtists(text) {
         console.log("searchArtists");
-        doRequest(buildSubsonicUrl("search3?query=" + text + "&albumCount=0" + "&artistCount=" + itemsPerPage + "&songCount=0" + "&artistOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseArtists );
+        doRequest(buildSubsonicUrl("search3?query=" + encodeURIComponent(text) + "&albumCount=0" + "&artistCount=" + itemsPerPage + "&songCount=0" + "&artistOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseArtists );
     }
 
     function searchAlbums(text) {
         console.log("searchAlbums");
-        doRequest(buildSubsonicUrl("search3?query=" + text + "&artistCount=0" + "&albumCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
+        doRequest(buildSubsonicUrl("search3?query=" + encodeURIComponent(text) + "&artistCount=0" + "&albumCount=" + itemsPerPage + "&songCount=0" + "&albumOffset=" + (currentPage - 1) * itemsPerPage ), "GET", parseAlbumList );
     }
 
     function loadArtistAlbums(artistId) {
@@ -339,7 +339,7 @@ Kirigami.ScrollablePage {
 
     function loadGenreAlbums(genre) {
         console.log("loadGenreAlbums");
-        doRequest(buildSubsonicUrl("getAlbumList2?type=byGenre&genre=" + genre), "GET", parseAlbumList );
+        doRequest(buildSubsonicUrl("getAlbumList2?type=byGenre&genre=" + encodeURIComponent(genre)), "GET", parseAlbumList );
     }
 
     function refresh() {
