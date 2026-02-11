@@ -123,7 +123,7 @@ Kirigami.ScrollablePage {
         id: grdAlbums
         model: getModel()
         delegate: getDelegate()
-        anchors.fill: parent
+        width: parent.width
         Layout.bottomMargin: 50
         cellWidth: _albumWidth + 8;
         cellHeight: _albumHeight + 8;
@@ -183,6 +183,7 @@ Kirigami.ScrollablePage {
             visible: _busy
         }
     }
+
 
     actions: [
         Kirigami.Action {
