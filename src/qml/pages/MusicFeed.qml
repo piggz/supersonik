@@ -406,6 +406,8 @@ Kirigami.ScrollablePage {
             console.log("Get genre list Ok");
             genres.clear();
 
+            let genreArray = [];
+
             var doc = res.documentElement;
             console.log("xhr length: " + doc.childNodes.length );
 
@@ -418,7 +420,7 @@ Kirigami.ScrollablePage {
                     for (var j = 0; j < gn.childNodes.length; ++j) {
                         var genre = gn.childNodes[j];
                         if (genre.nodeName === "genre" && attributeValue(genre, "albumCount") > 0) {
-                            genres.append({"genreName": genre.childNodes[0].nodeValue, "genreSongCount": attributeValue(genre, "songCount"),
+                            genreArray.push({"genreName": genre.childNodes[0].nodeValue, "genreSongCount": attributeValue(genre, "songCount"),
                                               "genreAlbumCount": attributeValue(genre, "albumCount")})
                             console.log(genre.childNodes[0].nodeValue);
                         }
@@ -426,6 +428,8 @@ Kirigami.ScrollablePage {
                     }
                 }
             }
+            const sortedGenres = genreArray.sort((a, b) => {return a.genreName.localeCompare(b.genreName)});
+            sortedGenres.forEach((a) => {genres.append(a)});
         } else {
             console.log("Get radio failed");
             showError(attributeValue(res.documentElement.childNodes[1], "message"));
