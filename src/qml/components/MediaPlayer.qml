@@ -65,7 +65,8 @@ Rectangle {
             font.bold: true
             Layout.alignment: Qt.AlignVCenter
             Layout.maximumWidth: root.width - 20
-            elide: "ElideRight"
+            elide: Text.ElideRight
+            wrapMode: Text.NoWrap
         }
 
         RowLayout {
@@ -81,7 +82,7 @@ Rectangle {
                     color: "white"
                     font.pointSize: 10
                     elide: Text.ElideRight
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.NoWrap
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 }
@@ -92,7 +93,7 @@ Rectangle {
                     color: "#cccccc"
                     font.pointSize: 9
                     elide: Text.ElideRight
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.NoWrap
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
                 }
