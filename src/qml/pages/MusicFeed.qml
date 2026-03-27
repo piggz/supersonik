@@ -43,6 +43,7 @@ Kirigami.ScrollablePage {
             onReplaceAlbum: (id, offlineMode) => {
                                 console.log(offlineMode);
                                 if (offlineMode) {
+                                    _busy = false;
                                     mediaPlayer.replaceAlbumOffline(id)
                                 } else {
                                     mediaPlayer.replaceAlbum(id)
@@ -51,6 +52,7 @@ Kirigami.ScrollablePage {
 
             onAppendAlbum: (id) => {
                                if (offlineMode) {
+                                   _busy = false;
                                    mediaPlayer.addAlbumOffline(id)
                                } else {
                                    mediaPlayer.addAlbum(id)
