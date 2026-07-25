@@ -182,7 +182,7 @@ Kirigami.ScrollablePage {
         Controls.BusyIndicator {
             id: indicator
             anchors.centerIn: parent
-            visible: _busy
+            visible: _busy && !_offlineMode
         }
     }
 
