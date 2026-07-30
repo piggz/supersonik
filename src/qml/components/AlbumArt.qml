@@ -22,11 +22,21 @@ Item {
         return elements;
     }
 
-    function downloadComplete(xhr, callback, albumid) {
-        if (FileIO.write(xhr.param, xhr.response)) {
-            callback(albumid, "file:" + FileIO.filePath(xhr.param))
-        } else {
-            showMessage("Error saving " + xhr.param);
+    function downloadComplete(xhr, callback, albumid, extension) {
+        if(!extension) {
+            var contenttype = xhr.getResponseHeader("content-type")
+            if(contenttype == "image/jpeg") {
+                extension = "jpg"
+            }
+        }
+
+        if(extension) {
+            var filename = xhr.param + "." + extension
+            if (FileIO.write(filename, xhr.response)) {
+                callback(albumid, "file:" + FileIO.filePath(filename))
+            } else {
+                showMessage("Error saving " + filename);
+            }
         }
     }
 
@@ -43,12 +53,12 @@ Item {
                 var extension = getUrlExtension(url)
 
                 var xhr = new XMLHttpRequest()
-                xhr.param = FileIO.makeFilename(artist + "_" + album + "." + extension)
+                xhr.param = FileIO.makeFilename(artist + "_" + album)
                 xhr.responseType = "arrayBuffer"
                 xhr.onreadystatechange = (function (response) {
                     return function () {
                         if (xhr.readyState === XMLHttpRequest.DONE) {
-                            downloadComplete(xhr, callback, albumid)
+                            downloadComplete(xhr, callback, albumid, extension)
                         }
                     }
                 })(xhr)
@@ -81,19 +91,31 @@ Item {
     function getAlbumArtUrl(coverArt, artist, album, albumid, callback) {
         var url = Qt.resolvedUrl("../pics/cassette.png")
         
-        if(coverArt) {
-            url = buildSubsonicUrl("getCoverArt?id=" + coverArt)
-        }
-        else {
-            var cached_url = FileIO.findFilePath(FileIO.makeFilename(artist + "_" + album))
+        var cached_url = FileIO.findFilePath(FileIO.makeFilename(artist + "_" + album))
 
-            if(cached_url) {
-                url = "file:" + cached_url
-            }
-            else if(callback) {
-                fetchLastFmCoverArtUrl(artist, album, albumid, callback)
-            }
+        if(cached_url) {
+            url = "file:" + cached_url
         }
-        return new URL(url) 
+        else if(coverArt) {
+            url = buildSubsonicUrl("getCoverArt?id=" + coverArt)
+
+            var xhr = new XMLHttpRequest()
+            xhr.param = FileIO.makeFilename(artist + "_" + album)
+            xhr.responseType = "arrayBuffer"
+            xhr.onreadystatechange = (function (response) {
+                return function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        downloadComplete(xhr, callback, albumid, null)
+                    }
+                }
+            })(xhr)
+            xhr.open("GET", url, true)
+            xhr.send('')
+        }
+        else if(callback) {
+            fetchLastFmCoverArtUrl(artist, album, albumid, callback)
+        }
+
+        return new URL(url)
     }
 }
