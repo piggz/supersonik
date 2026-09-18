@@ -1,12 +1,13 @@
 [Desktop Entry]
 Name=Supersonik
-Exec=qt-runner supersonik
+Exec=qt6-start.sh supersonik
 Icon=harbour-supersonik
 Type=Application
 Terminal=false
 Categories=Media
 X-Nemo-Application-Type=generic
 X-Nemo-Single-Instance=no
+X-Nemo-Application-Type=no-invoker
 
 [X-Sailjail]
 Sandboxing=Disabled

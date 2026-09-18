@@ -19,10 +19,10 @@ BuildRequires:	kf6-kcolorscheme-devel
 BuildRequires:	qt6-qtdeclarative-devel
 BuildRequires:	qt6-qtmultimedia-devel
 
-Requires:       qt-runner-qt6
 Requires:       qt6-qtmultimedia
 Requires:       kf6-kirigami-addons
 Requires:       amber-qml-plugin-mpris-qt6
+Requires:       qt6-sailfishos-util
 
 %description
 Subsonic music client for KDE desktops and mobile devices
