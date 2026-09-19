@@ -213,12 +213,25 @@ Item {
             db.transaction(function (tx) {
                 tx.executeSql('CREATE TABLE IF NOT EXISTS tracks (id text unique, name text, suffix text, albumId text, albumName text, artistId text, artistName text, coverArt text, duration integer, year text);')
             })
-            //Add field for track order
-            db.transaction(function (tx) {
-                tx.executeSql('ALTER TABLE tracks ADD COLUMN trackOrder DEFAULT 0;')
-            })
         } catch (err) {
             console.log("Error creating table in database: " + err)
+        };
+
+        var db = LocalStorage.openDatabaseSync("supersonik", "1.0", "Supersonik Offline DB", 1000000);
+
+        try {
+            db.transaction(function (tx) {
+                var rs = tx.executeSql("SELECT 1 FROM pragma_table_info('tracks') WHERE name = 'trackOrder';");
+
+                if (rs.rows.length === 0) {
+                    //Add field for track order
+                    db.transaction(function (tx) {
+                        tx.executeSql('ALTER TABLE tracks ADD COLUMN IF NOT EXISTS trackOrder DEFAULT 0;')
+                    })
+                }
+            })
+        } catch (err) {
+            console.log("Error adding column to table: " + err)
         };
 
         return db;
