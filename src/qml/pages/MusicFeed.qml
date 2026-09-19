@@ -69,6 +69,10 @@ Kirigami.ScrollablePage {
             onDownloadAlbum: (id) => {
                                  offlineFiles.downloadAlbum(id);
                              }
+
+            onDeleteOfflineAlbum: (id) => {
+                                           offlineFiles.deleteAlbum(id);
+                                       }
         }
     }
 

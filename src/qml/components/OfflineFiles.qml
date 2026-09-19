@@ -26,7 +26,25 @@ Item {
         doRequest(buildSubsonicUrl("getAlbum?id=" + albumId), "GET", parseAlbum);
     }
 
-    function addDownload(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year) {
+    function deleteAlbum(albumId) {
+        console.log("deleteAlbum", albumId);
+
+        const tracks = songs(albumId);
+        console.log("Deleting:", tracks);
+
+        tracks.forEach((track) => {
+                        const fileName = track.id + "." + track.suffix;
+                        console.log(fileName);
+                        if (deleteRecord(track.id)) {
+                            FileIO.rm(fileName);
+                        }
+                    }
+        );
+
+        loadOfflineAlbums();
+    }
+
+    function addDownload(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year, trackOrder) {
         console.log("addDownload", id);
 
         let item = {
@@ -39,7 +57,8 @@ Item {
             artistName: artistName,
             coverArt: coverArt,
             duration: duration,
-            year: year
+            year: year,
+            trackOrder: trackOrder
         }
         downloadQueue.append(item);
         doRequest(root.buildSubsonicUrl("download?id=" + id), "GET", downloadComplete, id + "." + suffix, "arrayBuffer");
@@ -70,7 +89,7 @@ Item {
                                     attributeValue(song, "albumId"), attributeValue(song, "album"),
                                     attributeValue(song, "artistId"), attributeValue(song, "artist"),
                                     attributeValue(song, "coverArt"), attributeValue(song, "duration"),
-                                    attributeValue(song, "year"));
+                                    attributeValue(song, "year"), j);
                     }
 
                 }
@@ -105,6 +124,11 @@ Item {
         } else {
             showMessage("Error saving " + xhr.param);
         }
+
+        if (downloadQueue.lengh === 0) {
+            showMessage("All donwloads complete");
+            loadOfflineAlbums();
+        }
     }
 
     function addRecord(rec) {
@@ -114,12 +138,29 @@ Item {
 
         try {
             db.transaction(function (tx) {
-                tx.executeSql('INSERT INTO tracks(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
-                              [rec.id, rec.suffix, rec.name, rec.albumId, rec.albumName, rec.artistId, rec.artistName, rec.coverArt, rec.duration, rec.year]);
+                tx.executeSql('INSERT INTO tracks(id, suffix, name, albumId, albumName, artistId, artistName, coverArt, duration, year, trackOrder) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                              [rec.id, rec.suffix, rec.name, rec.albumId, rec.albumName, rec.artistId, rec.artistName, rec.coverArt, rec.duration, rec.year, rec.trackOrder]);
 
             })
         } catch (err) {
             console.log("Error adding track in table: " + err)
+            success = false;
+        };
+        return success;
+    }
+
+    function deleteRecord(id) {
+        console.log("Deleting record:", id);
+        var db = openDatabase();
+        var success = true;
+
+        try {
+            db.transaction(function (tx) {
+                tx.executeSql('DELETE FROM tracks WHERE id=?', id);
+
+            })
+        } catch (err) {
+            console.log("Error deleting track from table: " + err)
             success = false;
         };
         return success;
@@ -132,7 +173,7 @@ Item {
 
         try {
             db.transaction(function (tx) {
-                var rs = tx.executeSql('SELECT id, name, albumId, albumName, artistId, artistName, coverArt, suffix, duration, year from tracks WHERE albumId=?', [albumId]);
+                var rs = tx.executeSql('SELECT id, name, albumId, albumName, artistId, artistName, coverArt, suffix, duration, year, trackOrder from tracks WHERE albumId=? ORDER BY trackOrder ASC', [albumId]);
 
                 for (var i = 0; i < rs.rows.length; i++) {
                     songs.push(rs.rows.item(i));
@@ -172,9 +213,14 @@ Item {
             db.transaction(function (tx) {
                 tx.executeSql('CREATE TABLE IF NOT EXISTS tracks (id text unique, name text, suffix text, albumId text, albumName text, artistId text, artistName text, coverArt text, duration integer, year text);')
             })
+            //Add field for track order
+            db.transaction(function (tx) {
+                tx.executeSql('ALTER TABLE tracks ADD COLUMN trackOrder DEFAULT 0;')
+            })
         } catch (err) {
             console.log("Error creating table in database: " + err)
         };
+
         return db;
     }
 }

@@ -18,6 +18,7 @@ Kirigami.Card {
     signal starAlbum(id: string)
     signal unstarAlbum(id: string)
     signal downloadAlbum(id: string)
+    signal deleteOfflineAlbum(id: string)
 
     Behavior on height { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
     Behavior on width { NumberAnimation { easing.type: Easing.InOutQuad; duration: 200 } }
@@ -61,6 +62,15 @@ Kirigami.Card {
             visible: !_offline
             onTriggered: {
                 downloadAlbum(_albumId);
+            }
+        },
+        Kirigami.Action {
+            icon.name: "delete"
+            text: qsTr("Delete")
+            displayHint: Kirigami.DisplayHint.IconOnly
+            visible: _offline
+            onTriggered: {
+                deleteOfflineAlbum(_albumId);
             }
         }
 
