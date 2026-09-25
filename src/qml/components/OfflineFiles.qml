@@ -226,7 +226,7 @@ Item {
                 if (rs.rows.length === 0) {
                     //Add field for track order
                     db.transaction(function (tx) {
-                        tx.executeSql('ALTER TABLE tracks ADD COLUMN IF NOT EXISTS trackOrder DEFAULT 0;')
+                        tx.executeSql('ALTER TABLE tracks ADD COLUMN trackOrder DEFAULT 0;')
                     })
                 }
             })
